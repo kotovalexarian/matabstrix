@@ -14,12 +14,23 @@ static GLuint program;
 
 static void iterate();
 
-static const char vertex_shader_source[] = \
-"attribute vec4 position;               \n"\
+static GLuint view_matrix;
 
-"void main(void) {                      \n"\
-"  gl_Position = position;              \n"\
-"}                                      \n";
+static GLfloat view[] = {
+  1.0, 0.0, 0.0, 0.0,
+  0.0, 1.0, 0.0, 0.0,
+  0.0, 0.0, 1.0, 0.0,
+  0.0 ,0.0, 0.0, 1.0,
+};
+
+static const char vertex_shader_source[] =  \
+"attribute vec4 position;                \n"\
+
+"uniform mat4 view_matrix;               \n"\
+
+"void main(void) {                       \n"\
+"  gl_Position = view_matrix * position; \n"\
+"}                                       \n";
 
 static const char fragment_shader_source[] =   \
 "void main(void) {                          \n"\
@@ -62,6 +73,8 @@ int main()
   glLinkProgram(program);
   glUseProgram(program);
 
+  view_matrix = glGetUniformLocation(program, "view_matrix");
+
   glGenBuffers(1, &triangle);
   glBindBuffer(GL_ARRAY_BUFFER, triangle);
   glBufferData(GL_ARRAY_BUFFER, 3 * 7 * sizeof(GLfloat), triangle_vertices, GL_STATIC_DRAW);
@@ -86,6 +99,8 @@ GLuint load_shader(const GLenum type, const char *source)
 void iterate()
 {
   glClear(GL_COLOR_BUFFER_BIT);
+
+  glUniformMatrix4fv(view_matrix, 1, GL_FALSE, view);
 
   glDrawArrays(GL_TRIANGLES, 0, 3);
 
