@@ -47,13 +47,55 @@ static const char fragment_shader_source[] = \
 "  gl_FragColor = f_color;                \n"\
 "}                                        \n";
 
-static const GLfloat triangle_vertices[] = {
-   0.0,  0.0,  0.8,  1.0, 0.0, 0.0,
-  -0.3,  0.0,  0.0,  0.0, 1.0, 0.0,
-   0.3,  0.0,  0.0,  0.0, 0.0, 1.0,
+static GLfloat cube_vertices[] = {
+  // front
+  -1.0, -1.0,  1.0,
+  1.0, -1.0,  1.0,
+  1.0,  1.0,  1.0,
+  -1.0,  1.0,  1.0,
+  // back
+  -1.0, -1.0, -1.0,
+  1.0, -1.0, -1.0,
+  1.0,  1.0, -1.0,
+  -1.0,  1.0, -1.0,
 };
 
-static GLuint triangle;
+const GLfloat cube_colors[] = {
+  // front colors
+  1.0, 0.0, 0.0,
+  0.0, 1.0, 0.0,
+  0.0, 0.0, 1.0,
+  1.0, 1.0, 1.0,
+  // back colors
+  1.0, 0.0, 0.0,
+  0.0, 1.0, 0.0,
+  0.0, 0.0, 1.0,
+  1.0, 1.0, 1.0,
+};
+
+const GLushort cube_elements[] = {
+  // front
+  0, 1, 2,
+  2, 3, 0,
+  // top
+  3, 2, 6,
+  6, 7, 3,
+  // back
+  7, 6, 5,
+  5, 4, 7,
+  // bottom
+  4, 5, 1,
+  1, 0, 4,
+  // left
+  4, 0, 3,
+  3, 7, 4,
+  // right
+  1, 5, 6,
+  6, 2, 1,
+};
+
+static GLuint cube_vertices_id, cube_colors_id;
+static GLuint cube_elements_id;
 
 int main()
 {
@@ -88,15 +130,25 @@ int main()
 
   view_matrix = glGetUniformLocation(program, "view_matrix");
 
-  glGenBuffers(1, &triangle);
-  glBindBuffer(GL_ARRAY_BUFFER, triangle);
-  glBufferData(GL_ARRAY_BUFFER, 3 * 6 * sizeof(GLfloat), triangle_vertices, GL_STATIC_DRAW);
-  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), reinterpret_cast<const GLvoid*>(0));
-  glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), reinterpret_cast<const GLvoid*>(3 * sizeof(GLfloat)));
+  glGenBuffers(1, &cube_vertices_id);
+  glBindBuffer(GL_ARRAY_BUFFER, cube_vertices_id);
+  glBufferData(GL_ARRAY_BUFFER, sizeof(cube_vertices), cube_vertices, GL_STATIC_DRAW);
+  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, reinterpret_cast<const GLvoid*>(0));
   glEnableVertexAttribArray(0);
+
+  glGenBuffers(1, &cube_colors_id);
+  glBindBuffer(GL_ARRAY_BUFFER, cube_colors_id);
+  glBufferData(GL_ARRAY_BUFFER, sizeof(cube_colors), cube_colors, GL_STATIC_DRAW);
+  glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, reinterpret_cast<const GLvoid*>(0));
   glEnableVertexAttribArray(1);
 
+  glGenBuffers(1, &cube_elements_id);
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, cube_elements_id);
+  glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(cube_elements), cube_elements, GL_STATIC_DRAW);
+
   glViewport(0, 0, 640, 480);
+
+  glEnable(GL_DEPTH_TEST);
 
   glClearColor(0, 0, 0, 0);
 
@@ -113,7 +165,7 @@ GLuint load_shader(const GLenum type, const char *source)
 
 void iterate()
 {
-  glClear(GL_COLOR_BUFFER_BIT);
+  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
   glm::mat4 view = glm::mat4(1.0f)
     * glm::rotate(glm::mat4(1.0f), glm::radians(delta_x - 90), glm::vec3(1.0f, 0.0f, 0.0f))
@@ -121,7 +173,8 @@ void iterate()
 
   glUniformMatrix4fv(view_matrix, 1, GL_FALSE, glm::value_ptr(view));
 
-  glDrawArrays(GL_TRIANGLES, 0, 3);
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, cube_elements_id);
+  glDrawElements(GL_TRIANGLES, 6 * 2 * 3, GL_UNSIGNED_SHORT, 0);
 
   glfwPollEvents();
 }
