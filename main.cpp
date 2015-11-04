@@ -10,24 +10,25 @@
 #include <emscripten/emscripten.h>
 #include <emscripten/html5.h>
 
-static GLFWCALL void on_key(int key, int action);
-static EM_BOOL on_em_mousemove(int event_type, const EmscriptenMouseEvent *mouse_event, void *user_data);
-
-static bool keys[GLFW_KEY_LAST];
-
 static GLuint load_shader(GLenum type, const char *source);
+static GLuint build_program();
 
-static GLuint vertex_shader;
-static GLuint fragment_shader;
-
-static GLuint program;
+static GLuint create_array_buffer(GLuint index, GLsizeiptr size, const GLvoid *data, GLint count, GLenum type);
+static GLuint create_element_array_buffer(GLsizeiptr size, const GLvoid *data);
 
 static void iterate();
 
+static GLFWCALL void on_key(int key, int action);
+static EM_BOOL on_em_mousemove(int event_type, const EmscriptenMouseEvent *mouse_event, void *user_data);
+
 static GLuint mvp_id;
+
+static bool keys[GLFW_KEY_LAST];
 
 static float pos_x = 0, pos_y = -4;
 static float delta_z = 0, delta_x = 0;
+
+static GLuint cube_elements_id;
 
 static const char vertex_shader_source[] =  \
 "attribute vec4 position;                \n"\
@@ -98,9 +99,6 @@ const GLushort cube_elements[] = {
   6, 2, 1,
 };
 
-static GLuint cube_vertices_id, cube_colors_id;
-static GLuint cube_elements_id;
-
 int main()
 {
   if (!glfwInit())
@@ -122,34 +120,18 @@ int main()
   glfwSetKeyCallback(on_key);
   emscripten_set_mousemove_callback(nullptr, nullptr, false, on_em_mousemove);
 
-  vertex_shader = load_shader(GL_VERTEX_SHADER, vertex_shader_source);
-  fragment_shader = load_shader(GL_FRAGMENT_SHADER, fragment_shader_source);
-
-  program = glCreateProgram();
-  glAttachShader(program, vertex_shader);
-  glAttachShader(program, fragment_shader);
-  glBindAttribLocation(program, 0, "position");
-  glBindAttribLocation(program, 1, "color");
-  glLinkProgram(program);
+  const GLuint program = build_program();
   glUseProgram(program);
 
   mvp_id = glGetUniformLocation(program, "mvp");
 
-  glGenBuffers(1, &cube_vertices_id);
-  glBindBuffer(GL_ARRAY_BUFFER, cube_vertices_id);
-  glBufferData(GL_ARRAY_BUFFER, sizeof(cube_vertices), cube_vertices, GL_STATIC_DRAW);
-  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, reinterpret_cast<const GLvoid*>(0));
+  create_array_buffer(0, sizeof(cube_vertices), cube_vertices, 3, GL_FLOAT);
   glEnableVertexAttribArray(0);
 
-  glGenBuffers(1, &cube_colors_id);
-  glBindBuffer(GL_ARRAY_BUFFER, cube_colors_id);
-  glBufferData(GL_ARRAY_BUFFER, sizeof(cube_colors), cube_colors, GL_STATIC_DRAW);
-  glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, reinterpret_cast<const GLvoid*>(0));
+  create_array_buffer(1, sizeof(cube_colors), cube_colors, 3, GL_FLOAT);
   glEnableVertexAttribArray(1);
 
-  glGenBuffers(1, &cube_elements_id);
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, cube_elements_id);
-  glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(cube_elements), cube_elements, GL_STATIC_DRAW);
+  cube_elements_id = create_element_array_buffer(sizeof(cube_elements), cube_elements);
 
   glViewport(0, 0, 640, 480);
 
@@ -166,6 +148,39 @@ GLuint load_shader(const GLenum type, const char *source)
   glShaderSource(shader, 1, &source, nullptr);
   glCompileShader(shader);
   return shader;
+}
+
+GLuint build_program()
+{
+  const GLuint vertex_shader = load_shader(GL_VERTEX_SHADER, vertex_shader_source);
+  const GLuint fragment_shader = load_shader(GL_FRAGMENT_SHADER, fragment_shader_source);
+
+  const GLuint program = glCreateProgram();
+  glAttachShader(program, vertex_shader);
+  glAttachShader(program, fragment_shader);
+  glBindAttribLocation(program, 0, "position");
+  glBindAttribLocation(program, 1, "color");
+  glLinkProgram(program);
+  return program;
+}
+
+GLuint create_array_buffer(GLuint index, GLsizeiptr size, const GLvoid *data, GLint count, GLenum type)
+{
+  GLuint id;
+  glGenBuffers(1, &id);
+  glBindBuffer(GL_ARRAY_BUFFER, id);
+  glBufferData(GL_ARRAY_BUFFER, size, data, GL_STATIC_DRAW);
+  glVertexAttribPointer(index, count, type, GL_FALSE, 0, reinterpret_cast<const GLvoid*>(0));
+  return id;
+}
+
+GLuint create_element_array_buffer(GLsizeiptr size, const GLvoid *data)
+{
+  GLuint id;
+  glGenBuffers(1, &id);
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, id);
+  glBufferData(GL_ELEMENT_ARRAY_BUFFER, size, data, GL_STATIC_DRAW);
+  return id;
 }
 
 void iterate()
@@ -210,8 +225,6 @@ void iterate()
 
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, cube_elements_id);
   glDrawElements(GL_TRIANGLES, 6 * 2 * 3, GL_UNSIGNED_SHORT, 0);
-
-  glfwPollEvents();
 }
 
 GLFWCALL void on_key(int key, int action)
