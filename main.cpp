@@ -2,11 +2,15 @@
 
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 
 #include <GL/glew.h>
 #include <GL/glfw.h>
 
 #include <emscripten/emscripten.h>
+#include <emscripten/html5.h>
+
+static EM_BOOL on_em_mousemove(int event_type, const EmscriptenMouseEvent *mouse_event, void *user_data);
 
 static GLuint load_shader(GLenum type, const char *source);
 
@@ -19,12 +23,7 @@ static void iterate();
 
 static GLuint view_matrix;
 
-static glm::mat4 view(
-  1.0, 0.0, 0.0, 0.0,
-  0.0, 1.0, 0.0, 0.0,
-  0.0, 0.0, 1.0, 0.0,
-  0.0, 0.0, 0.0, 1.0
-);
+static float delta_z = 0, delta_x = 0;
 
 static const char vertex_shader_source[] =  \
 "attribute vec4 position;                \n"\
@@ -41,9 +40,9 @@ static const char fragment_shader_source[] =   \
 "}                                          \n";
 
 static const GLfloat triangle_vertices[] = {
-   0.0,  0.8, 0.0,
-  -0.8, -0.8, 0.0,
-   0.8, -0.8, 0.0,
+   0.0,  0.0,  0.8,
+  -0.3,  0.0,  0.0,
+   0.3,  0.0,  0.0,
 };
 
 static GLuint triangle;
@@ -66,6 +65,8 @@ int main()
     exit(EXIT_FAILURE);
   }
 
+  emscripten_set_mousemove_callback(nullptr, nullptr, false, on_em_mousemove);
+
   vertex_shader = load_shader(GL_VERTEX_SHADER, vertex_shader_source);
   fragment_shader = load_shader(GL_FRAGMENT_SHADER, fragment_shader_source);
 
@@ -80,7 +81,7 @@ int main()
 
   glGenBuffers(1, &triangle);
   glBindBuffer(GL_ARRAY_BUFFER, triangle);
-  glBufferData(GL_ARRAY_BUFFER, 3 * 7 * sizeof(GLfloat), triangle_vertices, GL_STATIC_DRAW);
+  glBufferData(GL_ARRAY_BUFFER, 3 * 3 * sizeof(GLfloat), triangle_vertices, GL_STATIC_DRAW);
   glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), reinterpret_cast<const GLvoid*>(0));
   glEnableVertexAttribArray(0);
 
@@ -103,9 +104,33 @@ void iterate()
 {
   glClear(GL_COLOR_BUFFER_BIT);
 
+  glm::mat4 view = glm::mat4(1.0f)
+    * glm::rotate(glm::mat4(1.0f), glm::radians(delta_x - 90), glm::vec3(1.0f, 0.0f, 0.0f))
+    * glm::rotate(glm::mat4(1.0f), glm::radians(delta_z), glm::vec3(0.0f, 0.0f, 1.0f));
+
   glUniformMatrix4fv(view_matrix, 1, GL_FALSE, glm::value_ptr(view));
 
   glDrawArrays(GL_TRIANGLES, 0, 3);
 
   glfwPollEvents();
+}
+
+EM_BOOL on_em_mousemove(int event_type, const EmscriptenMouseEvent *mouse_event, void *user_data)
+{
+  delta_z += mouse_event->movementX;
+  delta_x += mouse_event->movementY;
+
+  if (delta_z < 0)
+    delta_z = 359;
+  else
+  if (delta_z >= 360)
+    delta_z = 0;
+
+  if (delta_x < -90)
+    delta_x = -90;
+  else
+  if (delta_x > 90)
+    delta_x = 90;
+
+  return true;
 }
