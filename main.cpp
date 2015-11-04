@@ -170,10 +170,29 @@ GLuint load_shader(const GLenum type, const char *source)
 
 void iterate()
 {
-  if (keys['W']) pos_y += 0.1;
-  if (keys['S']) pos_y -= 0.1;
-  if (keys['A']) pos_x -= 0.1;
-  if (keys['D']) pos_x += 0.1;
+  if (keys['W'])
+  {
+    pos_x += 0.1 * sin(glm::radians(delta_z));
+    pos_y += 0.1 * cos(glm::radians(delta_z));
+  }
+
+  if (keys['S'])
+  {
+    pos_x -= 0.1 * sin(glm::radians(delta_z));
+    pos_y -= 0.1 * cos(glm::radians(delta_z));
+  }
+
+  if (keys['A'])
+  {
+    pos_x -= 0.1 * cos(glm::radians(delta_z));
+    pos_y += 0.1 * sin(glm::radians(delta_z));
+  }
+
+  if (keys['D'])
+  {
+    pos_x += 0.1 * cos(glm::radians(delta_z));
+    pos_y -= 0.1 * sin(glm::radians(delta_z));
+  }
 
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
