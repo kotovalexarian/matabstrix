@@ -1,5 +1,8 @@
 #include <cstdlib>
 
+#include <glm/glm.hpp>
+#include <glm/gtc/type_ptr.hpp>
+
 #include <GL/glew.h>
 #include <GL/glfw.h>
 
@@ -16,12 +19,12 @@ static void iterate();
 
 static GLuint view_matrix;
 
-static GLfloat view[] = {
+static glm::mat4 view(
   1.0, 0.0, 0.0, 0.0,
   0.0, 1.0, 0.0, 0.0,
   0.0, 0.0, 1.0, 0.0,
-  0.0 ,0.0, 0.0, 1.0,
-};
+  0.0, 0.0, 0.0, 1.0
+);
 
 static const char vertex_shader_source[] =  \
 "attribute vec4 position;                \n"\
@@ -100,7 +103,7 @@ void iterate()
 {
   glClear(GL_COLOR_BUFFER_BIT);
 
-  glUniformMatrix4fv(view_matrix, 1, GL_FALSE, view);
+  glUniformMatrix4fv(view_matrix, 1, GL_FALSE, glm::value_ptr(view));
 
   glDrawArrays(GL_TRIANGLES, 0, 3);
 

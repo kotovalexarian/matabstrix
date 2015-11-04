@@ -8,3 +8,6 @@ file (GLOB sources *.cpp)
 
 add_executable (matabstrix ${sources})
 set (CMAKE_EXECUTABLE_SUFFIX ".html")
+
+find_package (GLM REQUIRED)
+include_directories (${GLM_INCLUDE_DIRS})
