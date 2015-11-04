@@ -27,22 +27,30 @@ static float delta_z = 0, delta_x = 0;
 
 static const char vertex_shader_source[] =  \
 "attribute vec4 position;                \n"\
+"attribute vec3 color;                   \n"\
+
+"varying vec4 f_color;                   \n"\
 
 "uniform mat4 view_matrix;               \n"\
 
 "void main(void) {                       \n"\
 "  gl_Position = view_matrix * position; \n"\
+"  f_color = vec4(color, 1.0);           \n"\
 "}                                       \n";
 
-static const char fragment_shader_source[] =   \
-"void main(void) {                          \n"\
-"  gl_FragColor = vec4(0.0, 1.0, 0.0, 1.0); \n"\
-"}                                          \n";
+static const char fragment_shader_source[] = \
+"precision lowp float;                    \n"\
+
+"varying vec4 f_color;                    \n"\
+
+"void main(void) {                        \n"\
+"  gl_FragColor = f_color;                \n"\
+"}                                        \n";
 
 static const GLfloat triangle_vertices[] = {
-   0.0,  0.0,  0.8,
-  -0.3,  0.0,  0.0,
-   0.3,  0.0,  0.0,
+   0.0,  0.0,  0.8,  1.0, 0.0, 0.0,
+  -0.3,  0.0,  0.0,  0.0, 1.0, 0.0,
+   0.3,  0.0,  0.0,  0.0, 0.0, 1.0,
 };
 
 static GLuint triangle;
@@ -74,6 +82,7 @@ int main()
   glAttachShader(program, vertex_shader);
   glAttachShader(program, fragment_shader);
   glBindAttribLocation(program, 0, "position");
+  glBindAttribLocation(program, 1, "color");
   glLinkProgram(program);
   glUseProgram(program);
 
@@ -81,9 +90,11 @@ int main()
 
   glGenBuffers(1, &triangle);
   glBindBuffer(GL_ARRAY_BUFFER, triangle);
-  glBufferData(GL_ARRAY_BUFFER, 3 * 3 * sizeof(GLfloat), triangle_vertices, GL_STATIC_DRAW);
-  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), reinterpret_cast<const GLvoid*>(0));
+  glBufferData(GL_ARRAY_BUFFER, 3 * 6 * sizeof(GLfloat), triangle_vertices, GL_STATIC_DRAW);
+  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), reinterpret_cast<const GLvoid*>(0));
+  glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), reinterpret_cast<const GLvoid*>(3 * sizeof(GLfloat)));
   glEnableVertexAttribArray(0);
+  glEnableVertexAttribArray(1);
 
   glViewport(0, 0, 640, 480);
 
