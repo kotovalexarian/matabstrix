@@ -21,7 +21,7 @@ static GLuint program;
 
 static void iterate();
 
-static GLuint view_matrix;
+static GLuint mvp_id;
 
 static float delta_z = 0, delta_x = 0;
 
@@ -31,10 +31,10 @@ static const char vertex_shader_source[] =  \
 
 "varying vec4 f_color;                   \n"\
 
-"uniform mat4 view_matrix;               \n"\
+"uniform mat4 mvp;                       \n"\
 
 "void main(void) {                       \n"\
-"  gl_Position = view_matrix * position; \n"\
+"  gl_Position = mvp * position;         \n"\
 "  f_color = vec4(color, 1.0);           \n"\
 "}                                       \n";
 
@@ -128,7 +128,7 @@ int main()
   glLinkProgram(program);
   glUseProgram(program);
 
-  view_matrix = glGetUniformLocation(program, "view_matrix");
+  mvp_id = glGetUniformLocation(program, "mvp");
 
   glGenBuffers(1, &cube_vertices_id);
   glBindBuffer(GL_ARRAY_BUFFER, cube_vertices_id);
@@ -167,11 +167,17 @@ void iterate()
 {
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+  glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 4.0f, -2.0f));
+
   glm::mat4 view = glm::mat4(1.0f)
     * glm::rotate(glm::mat4(1.0f), glm::radians(delta_x - 90), glm::vec3(1.0f, 0.0f, 0.0f))
     * glm::rotate(glm::mat4(1.0f), glm::radians(delta_z), glm::vec3(0.0f, 0.0f, 1.0f));
 
-  glUniformMatrix4fv(view_matrix, 1, GL_FALSE, glm::value_ptr(view));
+  glm::mat4 projection = glm::perspective(45.0f, (float)640 / (float)480, 0.1f, 10.0f);
+
+  glm::mat4 mvp = projection * view * model;
+
+  glUniformMatrix4fv(mvp_id, 1, GL_FALSE, glm::value_ptr(mvp));
 
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, cube_elements_id);
   glDrawElements(GL_TRIANGLES, 6 * 2 * 3, GL_UNSIGNED_SHORT, 0);
