@@ -10,7 +10,10 @@
 #include <emscripten/emscripten.h>
 #include <emscripten/html5.h>
 
+static GLFWCALL void on_key(int key, int action);
 static EM_BOOL on_em_mousemove(int event_type, const EmscriptenMouseEvent *mouse_event, void *user_data);
+
+static bool keys[GLFW_KEY_LAST];
 
 static GLuint load_shader(GLenum type, const char *source);
 
@@ -23,6 +26,7 @@ static void iterate();
 
 static GLuint mvp_id;
 
+static float pos_x = 0, pos_y = -4;
 static float delta_z = 0, delta_x = 0;
 
 static const char vertex_shader_source[] =  \
@@ -115,6 +119,7 @@ int main()
     exit(EXIT_FAILURE);
   }
 
+  glfwSetKeyCallback(on_key);
   emscripten_set_mousemove_callback(nullptr, nullptr, false, on_em_mousemove);
 
   vertex_shader = load_shader(GL_VERTEX_SHADER, vertex_shader_source);
@@ -165,9 +170,14 @@ GLuint load_shader(const GLenum type, const char *source)
 
 void iterate()
 {
+  if (keys['W']) pos_y += 0.1;
+  if (keys['S']) pos_y -= 0.1;
+  if (keys['A']) pos_x -= 0.1;
+  if (keys['D']) pos_x += 0.1;
+
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-  glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 4.0f, -2.0f));
+  glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(-pos_x, -pos_y, -2.0f));
 
   glm::mat4 view = glm::mat4(1.0f)
     * glm::rotate(glm::mat4(1.0f), glm::radians(delta_x - 90), glm::vec3(1.0f, 0.0f, 0.0f))
@@ -183,6 +193,11 @@ void iterate()
   glDrawElements(GL_TRIANGLES, 6 * 2 * 3, GL_UNSIGNED_SHORT, 0);
 
   glfwPollEvents();
+}
+
+GLFWCALL void on_key(int key, int action)
+{
+  keys[key] = action != GLFW_RELEASE;
 }
 
 EM_BOOL on_em_mousemove(int event_type, const EmscriptenMouseEvent *mouse_event, void *user_data)
