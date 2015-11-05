@@ -83,10 +83,12 @@ static bool keys[GLFW_KEY_LAST];
 static float pos_x = 0, pos_y = -4;
 static float delta_z = 0, delta_x = 0;
 
+static Model *cube;
 static Model *suzanne;
 static Model *teapot;
 static Model *bunny;
 
+static Object *cube1;
 static Object *suzanne1;
 static Object *teapot1;
 static Object *bunny1;
@@ -117,9 +119,14 @@ int main()
 
   mvp_id = program.get_uniform_location("mvp");
 
+  cube = new Model("/data/models/cube.obj");
   suzanne = new Model("/data/models/suzanne.obj");
   teapot = new Model("/data/models/teapot.obj");
   bunny = new Model("/data/models/bunny.obj");
+
+  cube1 = new Object(*cube);
+  cube1->position.x = 2.5;
+  cube1->position.y = -4.0;
 
   suzanne1 = new Object(*suzanne);
 
@@ -212,14 +219,11 @@ Model::Model(const char *const filename)
     else
     if (line.substr(0,2) == "f ")
     {
-      std::istringstream s(line.substr(2));
-      GLushort a, b, c;
-      s >> a;
-      s >> b;
-      s >> c;
-      elements.push_back(a - 1);
-      elements.push_back(b - 1);
-      elements.push_back(c - 1);
+      GLushort a_v, a_n, b_v, b_n, c_v, c_n;
+      sscanf(line.data(), "f %hu//%hu %hu//%hu %hu//%hu", &a_v, &a_n, &b_v, &b_n, &c_v, &c_n);
+      elements.push_back(a_v - 1);
+      elements.push_back(b_v - 1);
+      elements.push_back(c_v - 1);
     }
   }
 
@@ -317,6 +321,8 @@ void iterate()
   glm::mat4 projection = glm::perspective(45.0f, (float)640 / (float)480, 0.1f, 10.0f);
 
   glm::mat4 mvp = projection * view * model;
+
+  cube1->draw(mvp);
 
   suzanne1->draw(mvp);
   teapot1->draw(mvp);
