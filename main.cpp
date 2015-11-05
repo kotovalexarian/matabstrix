@@ -10,7 +10,7 @@
 #include <emscripten/emscripten.h>
 #include <emscripten/html5.h>
 
-static GLuint load_shader(GLenum type, const char *source);
+static GLuint load_shader(GLenum type, const char *filename);
 static GLuint build_program();
 
 static GLuint create_array_buffer(GLuint index, GLsizeiptr size, const GLvoid *data, GLint count, GLenum type);
@@ -30,28 +30,6 @@ static float delta_z = 0, delta_x = 0;
 
 static GLuint cube_id;
 static GLuint pyramid_id;
-
-static const char vertex_shader_source[] =  \
-"attribute vec4 position;                \n"\
-"attribute vec3 color;                   \n"\
-
-"varying vec4 f_color;                   \n"\
-
-"uniform mat4 mvp;                       \n"\
-
-"void main(void) {                       \n"\
-"  gl_Position = mvp * position;         \n"\
-"  f_color = vec4(color, 1.0);           \n"\
-"}                                       \n";
-
-static const char fragment_shader_source[] = \
-"precision lowp float;                    \n"\
-
-"varying vec4 f_color;                    \n"\
-
-"void main(void) {                        \n"\
-"  gl_FragColor = f_color;                \n"\
-"}                                        \n";
 
 static GLfloat vertices[] = {
   // front
@@ -165,18 +143,33 @@ int main()
   emscripten_set_main_loop(iterate, 0, 1);
 }
 
-GLuint load_shader(const GLenum type, const char *source)
+GLuint load_shader(const GLenum type, const char *filename)
 {
+  FILE *file = fopen(filename, "r");
+
+  fseek(file, 0, SEEK_END);
+  const long size = ftell(file);
+  fseek(file, 0, SEEK_SET);
+
+  char *source = (char*)malloc(size + 1);
+  fread(source, size, 1, file);
+  source[size] = 0;
+
+  fclose(file);
+
   const GLuint shader = glCreateShader(type);
-  glShaderSource(shader, 1, &source, nullptr);
+  glShaderSource(shader, 1, (const GLchar**)&source, nullptr);
   glCompileShader(shader);
+
+  free(source);
+
   return shader;
 }
 
 GLuint build_program()
 {
-  const GLuint vertex_shader = load_shader(GL_VERTEX_SHADER, vertex_shader_source);
-  const GLuint fragment_shader = load_shader(GL_FRAGMENT_SHADER, fragment_shader_source);
+  const GLuint vertex_shader = load_shader(GL_VERTEX_SHADER, "/data/shaders/vertex.glsl");
+  const GLuint fragment_shader = load_shader(GL_FRAGMENT_SHADER, "/data/shaders/fragment.glsl");
 
   const GLuint program = glCreateProgram();
   glAttachShader(program, vertex_shader);
