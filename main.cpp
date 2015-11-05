@@ -28,7 +28,8 @@ static bool keys[GLFW_KEY_LAST];
 static float pos_x = 0, pos_y = -4;
 static float delta_z = 0, delta_x = 0;
 
-static GLuint elements_id;
+static GLuint cube_id;
+static GLuint pyramid_id;
 
 static const char vertex_shader_source[] =  \
 "attribute vec4 position;                \n"\
@@ -63,7 +64,7 @@ static GLfloat vertices[] = {
   1.0, -1.0, -1.0,
   1.0,  1.0, -1.0,
   -1.0,  1.0, -1.0,
-  // pyramide
+  // pyramid
   2 + 0.0, 0.0, 1.0,
   2 + -0.5, -0.5, 0.0,
   2 + 0.5, 0.5, 0.0,
@@ -82,7 +83,7 @@ const GLfloat colors[] = {
   0.0, 1.0, 0.0,
   0.0, 0.0, 1.0,
   1.0, 1.0, 1.0,
-  // pyramide
+  // pyramid
   1.0, 0.0, 0.0,
   0.0, 1.0, 0.0,
   0.0, 0.0, 1.0,
@@ -90,7 +91,7 @@ const GLfloat colors[] = {
   1.0, 0.0, 1.0,
 };
 
-const GLushort elements[] = {
+const GLushort cube[] = {
   // front
   0, 1, 2,
   2, 3, 0,
@@ -109,7 +110,9 @@ const GLushort elements[] = {
   // right
   1, 5, 6,
   6, 2, 1,
-  // pyramide
+};
+
+const GLushort pyramid[] = {
   8, 9, 11,
   8, 9, 12,
   8, 10, 11,
@@ -150,7 +153,8 @@ int main()
   create_array_buffer(1, sizeof(colors), colors, 3, GL_FLOAT);
   glEnableVertexAttribArray(1);
 
-  elements_id = create_element_array_buffer(sizeof(elements), elements);
+  cube_id = create_element_array_buffer(sizeof(cube), cube);
+  pyramid_id = create_element_array_buffer(sizeof(pyramid), pyramid);
 
   glViewport(0, 0, 640, 480);
 
@@ -242,8 +246,11 @@ void iterate()
 
   glUniformMatrix4fv(mvp_id, 1, GL_FALSE, glm::value_ptr(mvp));
 
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elements_id);
-  glDrawElements(GL_TRIANGLES, 6 * 2 * 3 + 6 * 3, GL_UNSIGNED_SHORT, 0);
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, cube_id);
+  glDrawElements(GL_TRIANGLES, 6 * 2 * 3, GL_UNSIGNED_SHORT, 0);
+
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, pyramid_id);
+  glDrawElements(GL_TRIANGLES, 6 * 3, GL_UNSIGNED_SHORT, 0);
 }
 
 GLFWCALL void on_key(int key, int action)
