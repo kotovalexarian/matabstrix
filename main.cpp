@@ -1,4 +1,7 @@
 #include <cstdlib>
+#include <vector>
+#include <fstream>
+#include <sstream>
 
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -28,76 +31,21 @@ static bool keys[GLFW_KEY_LAST];
 static float pos_x = 0, pos_y = -4;
 static float delta_z = 0, delta_x = 0;
 
-static GLuint cube_id;
-static GLuint pyramid_id;
+static std::vector<GLfloat> positions;
+static std::vector<GLfloat> colors;
 
-static GLfloat vertices[] = {
-  // front
-  -1.0, -1.0,  1.0,
-  1.0, -1.0,  1.0,
-  1.0,  1.0,  1.0,
-  -1.0,  1.0,  1.0,
-  // back
-  -1.0, -1.0, -1.0,
-  1.0, -1.0, -1.0,
-  1.0,  1.0, -1.0,
-  -1.0,  1.0, -1.0,
-  // pyramid
-  0.0, 0.0, 1.0,
-  -0.5, -0.5, 0.0,
-  0.5, 0.5, 0.0,
-  -0.5, 0.5, 0.0,
-  0.5, -0.5, 0.0,
+struct Model
+{
+  std::vector<GLushort> elements;
+  GLsizei count;
+  GLuint id;
 };
 
-const GLfloat colors[] = {
-  // front colors
-  1.0, 0.0, 0.0,
-  0.0, 1.0, 0.0,
-  0.0, 0.0, 1.0,
-  1.0, 1.0, 1.0,
-  // back colors
-  1.0, 0.0, 0.0,
-  0.0, 1.0, 0.0,
-  0.0, 0.0, 1.0,
-  1.0, 1.0, 1.0,
-  // pyramid
-  1.0, 0.0, 0.0,
-  0.0, 1.0, 0.0,
-  0.0, 0.0, 1.0,
-  1.0, 1.0, 0.0,
-  1.0, 0.0, 1.0,
-};
+static void load_obj(const char *filename, Model *model);
 
-const GLushort cube[] = {
-  // front
-  0, 1, 2,
-  2, 3, 0,
-  // top
-  3, 2, 6,
-  6, 7, 3,
-  // back
-  7, 6, 5,
-  5, 4, 7,
-  // bottom
-  4, 5, 1,
-  1, 0, 4,
-  // left
-  4, 0, 3,
-  3, 7, 4,
-  // right
-  1, 5, 6,
-  6, 2, 1,
-};
-
-const GLushort pyramid[] = {
-  8, 9, 11,
-  8, 9, 12,
-  8, 10, 11,
-  8, 10, 12,
-  9, 10, 11,
-  9, 10, 12,
-};
+static Model suzanne;
+static Model teapot;
+static Model bunny;
 
 int main()
 {
@@ -125,14 +73,15 @@ int main()
 
   mvp_id = glGetUniformLocation(program, "mvp");
 
-  create_array_buffer(0, sizeof(vertices), vertices, 3, GL_FLOAT);
+  load_obj("/data/models/suzanne.obj", &suzanne);
+  load_obj("/data/models/teapot.obj", &teapot);
+  load_obj("/data/models/bunny.obj", &bunny);
+
+  create_array_buffer(0, 21000 * sizeof(GLfloat), positions.data(), 3, GL_FLOAT);
   glEnableVertexAttribArray(0);
 
-  create_array_buffer(1, sizeof(colors), colors, 3, GL_FLOAT);
+  create_array_buffer(1, 21000 * sizeof(GLfloat), colors.data(), 3, GL_FLOAT);
   glEnableVertexAttribArray(1);
-
-  cube_id = create_element_array_buffer(sizeof(cube), cube);
-  pyramid_id = create_element_array_buffer(sizeof(pyramid), pyramid);
 
   glViewport(0, 0, 640, 480);
 
@@ -239,15 +188,22 @@ void iterate()
 
   glUniformMatrix4fv(mvp_id, 1, GL_FALSE, glm::value_ptr(mvp));
 
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, cube_id);
-  glDrawElements(GL_TRIANGLES, 6 * 2 * 3, GL_UNSIGNED_SHORT, 0);
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, suzanne.id);
+  glDrawElements(GL_TRIANGLES, suzanne.count, GL_UNSIGNED_SHORT, 0);
 
-  mvp = glm::translate(mvp, glm::vec3(2.0f, 0.0f, 0.0f))
+  mvp = glm::translate(mvp, glm::vec3(4.0f, 0.0f, 0.0f))
     * glm::rotate(glm::mat4(1.0f), glm::radians(-45.0f), glm::vec3(0.0f, 0.0f, 1.0f));
   glUniformMatrix4fv(mvp_id, 1, GL_FALSE, glm::value_ptr(mvp));
 
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, pyramid_id);
-  glDrawElements(GL_TRIANGLES, 6 * 3, GL_UNSIGNED_SHORT, 0);
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, teapot.id);
+  glDrawElements(GL_TRIANGLES, teapot.count, GL_UNSIGNED_SHORT, 0);
+
+  mvp = glm::translate(mvp, glm::vec3(-4.0f, 0.0f, 0.0f))
+    * glm::rotate(glm::mat4(1.0f), glm::radians(-45.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+  glUniformMatrix4fv(mvp_id, 1, GL_FALSE, glm::value_ptr(mvp));
+
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bunny.id);
+  glDrawElements(GL_TRIANGLES, bunny.count, GL_UNSIGNED_SHORT, 0);
 }
 
 GLFWCALL void on_key(int key, int action)
@@ -273,4 +229,43 @@ EM_BOOL on_em_mousemove(int event_type, const EmscriptenMouseEvent *mouse_event,
     delta_x = 90;
 
   return true;
+}
+
+void load_obj(const char *filename, Model *model)
+{
+  const GLsizei offset = positions.size() / 3;
+
+  std::ifstream file(filename, std::ios::in);
+
+  std::string line;
+  while (std::getline(file, line))
+  {
+    if (line.substr(0,2) == "v ")
+    {
+      std::istringstream s(line.substr(2));
+      GLfloat x, y, z;
+      s >> x; s >> y, s >> z;
+      positions.push_back(x);
+      positions.push_back(y);
+      positions.push_back(z);
+      colors.push_back(1.0f);
+      colors.push_back(0.0f);
+      colors.push_back(0.0f);
+    }
+    else
+    if (line.substr(0,2) == "f ")
+    {
+      std::istringstream s(line.substr(2));
+      GLushort a, b, c;
+      s >> a;
+      s >> b;
+      s >> c;
+      model->elements.push_back(offset + a - 1);
+      model->elements.push_back(offset + b - 1);
+      model->elements.push_back(offset + c - 1);
+    }
+  }
+
+  model->count = model->elements.size();
+  model->id = create_element_array_buffer(model->count * sizeof(GLushort), model->elements.data());
 }
