@@ -50,6 +50,9 @@ private:
   std::vector<GLfloat> colors;
   GLuint colors_id;
 
+  std::vector<GLfloat> normals;
+  GLuint normals_id;
+
   std::vector<GLushort> elements;
   GLuint id;
 
@@ -201,26 +204,47 @@ Model::Model(const char *const filename)
 {
   std::ifstream file(filename, std::ios::in);
 
+  std::vector<glm::vec3> tmp_normals;
+
   std::string line;
   while (std::getline(file, line))
   {
-    if (line.substr(0,2) == "v ")
+    if (line.substr(0, 2) == "v ")
     {
-      std::istringstream s(line.substr(2));
       GLfloat x, y, z;
-      s >> x; s >> y, s >> z;
+      sscanf(line.data(), "v %f %f %f", &x, &y, &z);
       positions.push_back(x);
       positions.push_back(y);
       positions.push_back(z);
-      colors.push_back(1.0f);
-      colors.push_back(0.0f);
-      colors.push_back(0.0f);
+      colors.push_back(0.5f);
+      colors.push_back(0.5f);
+      colors.push_back(0.5f);
+      normals.resize(positions.size());
     }
     else
-    if (line.substr(0,2) == "f ")
+    if (line.substr(0, 3) == "vn ")
+    {
+      glm::vec3 n;
+      sscanf(line.data(), "vn %f %f %f", &n.x, &n.y, &n.z);
+      tmp_normals.push_back(n);
+    }
+    else
+    if (line.substr(0, 2) == "f ")
     {
       GLushort a_v, a_n, b_v, b_n, c_v, c_n;
       sscanf(line.data(), "f %hu//%hu %hu//%hu %hu//%hu", &a_v, &a_n, &b_v, &b_n, &c_v, &c_n);
+      glm::vec3 n_a = tmp_normals[a_n];
+      glm::vec3 n_b = tmp_normals[b_n];
+      glm::vec3 n_c = tmp_normals[c_n];
+      normals[3 * a_v] = n_a.x;
+      normals[3 * a_v + 1] = n_a.y;
+      normals[3 * a_v + 2] = n_a.z;
+      normals[3 * b_v] = n_b.x;
+      normals[3 * b_v + 1] = n_b.y;
+      normals[3 * b_v + 2] = n_b.z;
+      normals[3 * c_v] = n_c.x;
+      normals[3 * c_v + 1] = n_c.y;
+      normals[3 * c_v + 2] = n_c.z;
       elements.push_back(a_v - 1);
       elements.push_back(b_v - 1);
       elements.push_back(c_v - 1);
@@ -228,7 +252,8 @@ Model::Model(const char *const filename)
   }
 
   positions_id = create_array_buffer(GL_ARRAY_BUFFER, positions.size() * sizeof(GLfloat), positions.data());
-  colors_id = create_array_buffer(GL_ARRAY_BUFFER, positions.size() * sizeof(GLfloat), colors.data());
+  colors_id = create_array_buffer(GL_ARRAY_BUFFER, colors.size() * sizeof(GLfloat), colors.data());
+  normals_id = create_array_buffer(GL_ARRAY_BUFFER, normals.size() * sizeof(GLfloat), normals.data());
   id = create_array_buffer(GL_ELEMENT_ARRAY_BUFFER, elements.size() * sizeof(GLushort), elements.data());
 }
 
@@ -248,6 +273,9 @@ void Model::draw() const
 
   glBindBuffer(GL_ARRAY_BUFFER, colors_id);
   glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, reinterpret_cast<const GLvoid*>(0));
+
+  glBindBuffer(GL_ARRAY_BUFFER, normals_id);
+  glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 0, reinterpret_cast<const GLvoid*>(0));
 
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, id);
 
@@ -276,10 +304,12 @@ Program build_program()
   program.attach_shader(fragment_shader);
   program.bind_attrib_location(0, "position");
   program.bind_attrib_location(1, "color");
+  program.bind_attrib_location(2, "normal");
   program.link();
 
   glEnableVertexAttribArray(0);
   glEnableVertexAttribArray(1);
+  glEnableVertexAttribArray(2);
 
   return program;
 }
@@ -323,7 +353,6 @@ void iterate()
   glm::mat4 mvp = projection * view * model;
 
   cube1->draw(mvp);
-
   suzanne1->draw(mvp);
   teapot1->draw(mvp);
   bunny1->draw(mvp);
