@@ -16,8 +16,7 @@
 static GLuint load_shader(GLenum type, const char *filename);
 static GLuint build_program();
 
-static GLuint create_array_buffer(GLuint index, GLsizeiptr size, const GLvoid *data, GLint count, GLenum type);
-static GLuint create_element_array_buffer(GLsizeiptr size, const GLvoid *data);
+static GLuint create_array_buffer(GLenum type, GLsizeiptr size, const GLvoid *data);
 
 static void iterate();
 
@@ -31,13 +30,15 @@ static bool keys[GLFW_KEY_LAST];
 static float pos_x = 0, pos_y = -4;
 static float delta_z = 0, delta_x = 0;
 
-static std::vector<GLfloat> positions;
-static std::vector<GLfloat> colors;
-
 struct Model
 {
+  std::vector<GLfloat> positions;
+  GLuint positions_id;
+
+  std::vector<GLfloat> colors;
+  GLuint colors_id;
+
   std::vector<GLushort> elements;
-  GLsizei count;
   GLuint id;
 };
 
@@ -71,17 +72,14 @@ int main()
   const GLuint program = build_program();
   glUseProgram(program);
 
+  glEnableVertexAttribArray(0);
+  glEnableVertexAttribArray(1);
+
   mvp_id = glGetUniformLocation(program, "mvp");
 
   load_obj("/data/models/suzanne.obj", &suzanne);
   load_obj("/data/models/teapot.obj", &teapot);
   load_obj("/data/models/bunny.obj", &bunny);
-
-  create_array_buffer(0, 21000 * sizeof(GLfloat), positions.data(), 3, GL_FLOAT);
-  glEnableVertexAttribArray(0);
-
-  create_array_buffer(1, 21000 * sizeof(GLfloat), colors.data(), 3, GL_FLOAT);
-  glEnableVertexAttribArray(1);
 
   glViewport(0, 0, 640, 480);
 
@@ -129,22 +127,12 @@ GLuint build_program()
   return program;
 }
 
-GLuint create_array_buffer(GLuint index, GLsizeiptr size, const GLvoid *data, GLint count, GLenum type)
+GLuint create_array_buffer(GLenum type, GLsizeiptr size, const GLvoid *data)
 {
   GLuint id;
   glGenBuffers(1, &id);
-  glBindBuffer(GL_ARRAY_BUFFER, id);
-  glBufferData(GL_ARRAY_BUFFER, size, data, GL_STATIC_DRAW);
-  glVertexAttribPointer(index, count, type, GL_FALSE, 0, reinterpret_cast<const GLvoid*>(0));
-  return id;
-}
-
-GLuint create_element_array_buffer(GLsizeiptr size, const GLvoid *data)
-{
-  GLuint id;
-  glGenBuffers(1, &id);
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, id);
-  glBufferData(GL_ELEMENT_ARRAY_BUFFER, size, data, GL_STATIC_DRAW);
+  glBindBuffer(type, id);
+  glBufferData(type, size, data, GL_STATIC_DRAW);
   return id;
 }
 
@@ -188,22 +176,31 @@ void iterate()
 
   glUniformMatrix4fv(mvp_id, 1, GL_FALSE, glm::value_ptr(mvp));
 
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, suzanne.id);
-  glDrawElements(GL_TRIANGLES, suzanne.count, GL_UNSIGNED_SHORT, 0);
+  auto draw_model = [](Model &model) {
+    glBindBuffer(GL_ARRAY_BUFFER, model.positions_id);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, reinterpret_cast<const GLvoid*>(0));
+
+    glBindBuffer(GL_ARRAY_BUFFER, model.colors_id);
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, reinterpret_cast<const GLvoid*>(0));
+
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, model.id);
+
+    glDrawElements(GL_TRIANGLES, model.elements.size(), GL_UNSIGNED_SHORT, 0);
+  };
+
+  draw_model(suzanne);
 
   mvp = glm::translate(mvp, glm::vec3(4.0f, 0.0f, 0.0f))
     * glm::rotate(glm::mat4(1.0f), glm::radians(-45.0f), glm::vec3(0.0f, 0.0f, 1.0f));
   glUniformMatrix4fv(mvp_id, 1, GL_FALSE, glm::value_ptr(mvp));
 
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, teapot.id);
-  glDrawElements(GL_TRIANGLES, teapot.count, GL_UNSIGNED_SHORT, 0);
+  draw_model(teapot);
 
   mvp = glm::translate(mvp, glm::vec3(-4.0f, 0.0f, 0.0f))
     * glm::rotate(glm::mat4(1.0f), glm::radians(-45.0f), glm::vec3(0.0f, 0.0f, 1.0f));
   glUniformMatrix4fv(mvp_id, 1, GL_FALSE, glm::value_ptr(mvp));
 
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bunny.id);
-  glDrawElements(GL_TRIANGLES, bunny.count, GL_UNSIGNED_SHORT, 0);
+  draw_model(bunny);
 }
 
 GLFWCALL void on_key(int key, int action)
@@ -233,8 +230,6 @@ EM_BOOL on_em_mousemove(int event_type, const EmscriptenMouseEvent *mouse_event,
 
 void load_obj(const char *filename, Model *model)
 {
-  const GLsizei offset = positions.size() / 3;
-
   std::ifstream file(filename, std::ios::in);
 
   std::string line;
@@ -245,12 +240,12 @@ void load_obj(const char *filename, Model *model)
       std::istringstream s(line.substr(2));
       GLfloat x, y, z;
       s >> x; s >> y, s >> z;
-      positions.push_back(x);
-      positions.push_back(y);
-      positions.push_back(z);
-      colors.push_back(1.0f);
-      colors.push_back(0.0f);
-      colors.push_back(0.0f);
+      model->positions.push_back(x);
+      model->positions.push_back(y);
+      model->positions.push_back(z);
+      model->colors.push_back(1.0f);
+      model->colors.push_back(0.0f);
+      model->colors.push_back(0.0f);
     }
     else
     if (line.substr(0,2) == "f ")
@@ -260,12 +255,13 @@ void load_obj(const char *filename, Model *model)
       s >> a;
       s >> b;
       s >> c;
-      model->elements.push_back(offset + a - 1);
-      model->elements.push_back(offset + b - 1);
-      model->elements.push_back(offset + c - 1);
+      model->elements.push_back(a - 1);
+      model->elements.push_back(b - 1);
+      model->elements.push_back(c - 1);
     }
   }
 
-  model->count = model->elements.size();
-  model->id = create_element_array_buffer(model->count * sizeof(GLushort), model->elements.data());
+  model->positions_id = create_array_buffer(GL_ARRAY_BUFFER, model->positions.size() * sizeof(GLfloat), model->positions.data());
+  model->colors_id = create_array_buffer(GL_ARRAY_BUFFER, model->positions.size() * sizeof(GLfloat), model->colors.data());
+  model->id = create_array_buffer(GL_ELEMENT_ARRAY_BUFFER, model->elements.size() * sizeof(GLushort), model->elements.data());
 }
