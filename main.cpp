@@ -65,11 +65,11 @@ static GLfloat vertices[] = {
   1.0,  1.0, -1.0,
   -1.0,  1.0, -1.0,
   // pyramid
-  2 + 0.0, 0.0, 1.0,
-  2 + -0.5, -0.5, 0.0,
-  2 + 0.5, 0.5, 0.0,
-  2 + -0.5, 0.5, 0.0,
-  2 + 0.5, -0.5, 0.0,
+  0.0, 0.0, 1.0,
+  -0.5, -0.5, 0.0,
+  0.5, 0.5, 0.0,
+  -0.5, 0.5, 0.0,
+  0.5, -0.5, 0.0,
 };
 
 const GLfloat colors[] = {
@@ -248,6 +248,10 @@ void iterate()
 
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, cube_id);
   glDrawElements(GL_TRIANGLES, 6 * 2 * 3, GL_UNSIGNED_SHORT, 0);
+
+  mvp = glm::translate(mvp, glm::vec3(2.0f, 0.0f, 0.0f))
+    * glm::rotate(glm::mat4(1.0f), glm::radians(-45.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+  glUniformMatrix4fv(mvp_id, 1, GL_FALSE, glm::value_ptr(mvp));
 
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, pyramid_id);
   glDrawElements(GL_TRIANGLES, 6 * 3, GL_UNSIGNED_SHORT, 0);
