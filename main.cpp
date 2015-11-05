@@ -28,7 +28,7 @@ static bool keys[GLFW_KEY_LAST];
 static float pos_x = 0, pos_y = -4;
 static float delta_z = 0, delta_x = 0;
 
-static GLuint cube_elements_id;
+static GLuint elements_id;
 
 static const char vertex_shader_source[] =  \
 "attribute vec4 position;                \n"\
@@ -52,7 +52,7 @@ static const char fragment_shader_source[] = \
 "  gl_FragColor = f_color;                \n"\
 "}                                        \n";
 
-static GLfloat cube_vertices[] = {
+static GLfloat vertices[] = {
   // front
   -1.0, -1.0,  1.0,
   1.0, -1.0,  1.0,
@@ -63,9 +63,15 @@ static GLfloat cube_vertices[] = {
   1.0, -1.0, -1.0,
   1.0,  1.0, -1.0,
   -1.0,  1.0, -1.0,
+  // pyramide
+  2 + 0.0, 0.0, 1.0,
+  2 + -0.5, -0.5, 0.0,
+  2 + 0.5, 0.5, 0.0,
+  2 + -0.5, 0.5, 0.0,
+  2 + 0.5, -0.5, 0.0,
 };
 
-const GLfloat cube_colors[] = {
+const GLfloat colors[] = {
   // front colors
   1.0, 0.0, 0.0,
   0.0, 1.0, 0.0,
@@ -76,9 +82,15 @@ const GLfloat cube_colors[] = {
   0.0, 1.0, 0.0,
   0.0, 0.0, 1.0,
   1.0, 1.0, 1.0,
+  // pyramide
+  1.0, 0.0, 0.0,
+  0.0, 1.0, 0.0,
+  0.0, 0.0, 1.0,
+  1.0, 1.0, 0.0,
+  1.0, 0.0, 1.0,
 };
 
-const GLushort cube_elements[] = {
+const GLushort elements[] = {
   // front
   0, 1, 2,
   2, 3, 0,
@@ -97,6 +109,13 @@ const GLushort cube_elements[] = {
   // right
   1, 5, 6,
   6, 2, 1,
+  // pyramide
+  8, 9, 11,
+  8, 9, 12,
+  8, 10, 11,
+  8, 10, 12,
+  9, 10, 11,
+  9, 10, 12,
 };
 
 int main()
@@ -125,13 +144,13 @@ int main()
 
   mvp_id = glGetUniformLocation(program, "mvp");
 
-  create_array_buffer(0, sizeof(cube_vertices), cube_vertices, 3, GL_FLOAT);
+  create_array_buffer(0, sizeof(vertices), vertices, 3, GL_FLOAT);
   glEnableVertexAttribArray(0);
 
-  create_array_buffer(1, sizeof(cube_colors), cube_colors, 3, GL_FLOAT);
+  create_array_buffer(1, sizeof(colors), colors, 3, GL_FLOAT);
   glEnableVertexAttribArray(1);
 
-  cube_elements_id = create_element_array_buffer(sizeof(cube_elements), cube_elements);
+  elements_id = create_element_array_buffer(sizeof(elements), elements);
 
   glViewport(0, 0, 640, 480);
 
@@ -223,8 +242,8 @@ void iterate()
 
   glUniformMatrix4fv(mvp_id, 1, GL_FALSE, glm::value_ptr(mvp));
 
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, cube_elements_id);
-  glDrawElements(GL_TRIANGLES, 6 * 2 * 3, GL_UNSIGNED_SHORT, 0);
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elements_id);
+  glDrawElements(GL_TRIANGLES, 6 * 2 * 3 + 6 * 3, GL_UNSIGNED_SHORT, 0);
 }
 
 GLFWCALL void on_key(int key, int action)
