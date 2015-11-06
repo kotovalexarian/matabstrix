@@ -44,13 +44,13 @@ public:
   void draw() const;
 
 private:
-  std::vector<GLfloat> positions;
+  std::vector<glm::vec3> positions;
   GLuint positions_id;
 
-  std::vector<GLfloat> tex_coords;
+  std::vector<glm::vec2> tex_coords;
   GLuint tex_coords_id;
 
-  std::vector<GLfloat> normals;
+  std::vector<glm::vec3> normals;
   GLuint normals_id;
 
   std::vector<GLushort> elements;
@@ -211,11 +211,9 @@ Model::Model(const char *const filename)
   {
     if (line.substr(0, 2) == "v ")
     {
-      GLfloat x, y, z;
-      sscanf(line.data(), "v %f %f %f", &x, &y, &z);
-      positions.push_back(x);
-      positions.push_back(y);
-      positions.push_back(z);
+      glm::vec3 v;
+      sscanf(line.data(), "v %f %f %f", &v.x, &v.y, &v.z);
+      positions.push_back(v);
       normals.resize(positions.size());
     }
     else
@@ -230,27 +228,18 @@ Model::Model(const char *const filename)
     {
       GLushort a_v, a_n, b_v, b_n, c_v, c_n;
       sscanf(line.data(), "f %hu//%hu %hu//%hu %hu//%hu", &a_v, &a_n, &b_v, &b_n, &c_v, &c_n);
-      glm::vec3 n_a = tmp_normals[a_n];
-      glm::vec3 n_b = tmp_normals[b_n];
-      glm::vec3 n_c = tmp_normals[c_n];
-      normals[3 * a_v] = n_a.x;
-      normals[3 * a_v + 1] = n_a.y;
-      normals[3 * a_v + 2] = n_a.z;
-      normals[3 * b_v] = n_b.x;
-      normals[3 * b_v + 1] = n_b.y;
-      normals[3 * b_v + 2] = n_b.z;
-      normals[3 * c_v] = n_c.x;
-      normals[3 * c_v + 1] = n_c.y;
-      normals[3 * c_v + 2] = n_c.z;
+      normals[a_v - 1] = tmp_normals[a_n - 1];
+      normals[b_v - 1] = tmp_normals[b_n - 1];
+      normals[c_v - 1] = tmp_normals[c_n - 1];
       elements.push_back(a_v - 1);
       elements.push_back(b_v - 1);
       elements.push_back(c_v - 1);
     }
   }
 
-  positions_id = create_array_buffer(GL_ARRAY_BUFFER, positions.size() * sizeof(GLfloat), positions.data());
-  tex_coords_id = create_array_buffer(GL_ARRAY_BUFFER, tex_coords.size() * sizeof(GLfloat), tex_coords.data());
-  normals_id = create_array_buffer(GL_ARRAY_BUFFER, normals.size() * sizeof(GLfloat), normals.data());
+  positions_id = create_array_buffer(GL_ARRAY_BUFFER, 3 * positions.size() * sizeof(GLfloat), positions.data());
+  tex_coords_id = create_array_buffer(GL_ARRAY_BUFFER, 2 * tex_coords.size() * sizeof(GLfloat), tex_coords.data());
+  normals_id = create_array_buffer(GL_ARRAY_BUFFER, 3 * normals.size() * sizeof(GLfloat), normals.data());
   id = create_array_buffer(GL_ELEMENT_ARRAY_BUFFER, elements.size() * sizeof(GLushort), elements.data());
 }
 
@@ -269,7 +258,7 @@ void Model::draw() const
   glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, reinterpret_cast<const GLvoid*>(0));
 
   glBindBuffer(GL_ARRAY_BUFFER, tex_coords_id);
-  glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, reinterpret_cast<const GLvoid*>(0));
+  glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, reinterpret_cast<const GLvoid*>(0));
 
   glBindBuffer(GL_ARRAY_BUFFER, normals_id);
   glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 0, reinterpret_cast<const GLvoid*>(0));
