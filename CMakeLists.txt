@@ -3,7 +3,7 @@ set (CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/"
 
 project (Matabstrix)
 add_definitions ("-std=c++14 -Wall -Wextra")
-set (CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} "--preload-file data")
+set (CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} "--use-preload-plugins --preload-file data")
 
 file (GLOB sources *.cpp)
 

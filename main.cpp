@@ -1,4 +1,5 @@
 #include <cstdlib>
+
 #include <vector>
 #include <fstream>
 #include <sstream>
@@ -6,6 +7,8 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+
+#include <SDL_image.h>
 
 #include <GL/glew.h>
 #include <GL/glfw.h>
@@ -30,8 +33,8 @@ public:
   void attach_shader(const Shader &shader);
   void bind_attrib_location(GLuint index, const GLchar *name);
   void link();
-  void use();
-  GLuint get_uniform_location(const GLchar *name);
+  void use() const;
+  GLuint get_uniform_location(const GLchar *name) const;
 
 private:
   GLuint _id;
@@ -72,6 +75,16 @@ private:
   const Model &_model;
 };
 
+class Texture
+{
+public:
+  Texture(const char *filename);
+  void use() const;
+
+private:
+  GLuint _id;
+};
+
 static Program build_program();
 
 static void iterate();
@@ -95,6 +108,9 @@ static Object *cube1;
 static Object *suzanne1;
 static Object *teapot1;
 static Object *bunny1;
+
+static Texture *suzanne_tex;
+static Texture *bunny_tex;
 
 int main()
 {
@@ -132,6 +148,7 @@ int main()
   cube1->position.y = -4.0;
 
   suzanne1 = new Object(*suzanne);
+  suzanne1->position.z = -1;
 
   teapot1 = new Object(*teapot);
   teapot1->position.x = -3.0;
@@ -140,11 +157,17 @@ int main()
   bunny1 = new Object(*bunny);
   bunny1->position.x = 3.0;
 
+  suzanne_tex = new Texture("/data/textures/suzanne.png");
+  bunny_tex = new Texture("/data/textures/bunny.png");
+
+  GLint u_texture = program.get_uniform_location("texture");
+  glUniform1i(u_texture, 0);
+
   glViewport(0, 0, 640, 480);
 
   glEnable(GL_DEPTH_TEST);
 
-  glClearColor(0, 0, 0, 0);
+  glClearColor(1, 1, 1, 0);
 
   emscripten_set_main_loop(iterate, 0, 1);
 }
@@ -190,12 +213,12 @@ void Program::link()
   glLinkProgram(_id);
 }
 
-void Program::use()
+void Program::use() const
 {
   glUseProgram(_id);
 }
 
-GLuint Program::get_uniform_location(const GLchar *name)
+GLuint Program::get_uniform_location(const GLchar *name) const
 {
   return glGetUniformLocation(_id, name);
 }
@@ -269,9 +292,14 @@ Model::Model(const char *const filename)
   }
 
   positions_id = create_array_buffer(GL_ARRAY_BUFFER, 3 * positions.size() * sizeof(GLfloat), positions.data());
+
   if (attr_count == 3)
     tex_coords_id = create_array_buffer(GL_ARRAY_BUFFER, 2 * tex_coords.size() * sizeof(GLfloat), tex_coords.data());
+  else
+    tex_coords_id = 0;
+
   normals_id = create_array_buffer(GL_ARRAY_BUFFER, 3 * normals.size() * sizeof(GLfloat), normals.data());
+
   id = create_array_buffer(GL_ELEMENT_ARRAY_BUFFER, elements.size() * sizeof(GLushort), elements.data());
 }
 
@@ -289,8 +317,14 @@ void Model::draw() const
   glBindBuffer(GL_ARRAY_BUFFER, positions_id);
   glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, reinterpret_cast<const GLvoid*>(0));
 
-  glBindBuffer(GL_ARRAY_BUFFER, tex_coords_id);
-  glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, reinterpret_cast<const GLvoid*>(0));
+  if (tex_coords_id == 0)
+    glDisableVertexAttribArray(1);
+  else
+  {
+    glEnableVertexAttribArray(1);
+    glBindBuffer(GL_ARRAY_BUFFER, tex_coords_id);
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, reinterpret_cast<const GLvoid*>(0));
+  }
 
   glBindBuffer(GL_ARRAY_BUFFER, normals_id);
   glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 0, reinterpret_cast<const GLvoid*>(0));
@@ -310,6 +344,23 @@ void Object::draw(const glm::mat4 &mvp) const
   glUniformMatrix4fv(mvp_id, 1, GL_FALSE, glm::value_ptr(transform));
 
   _model.draw();
+}
+
+Texture::Texture(const char *const filename)
+{
+  SDL_Surface *surface = IMG_Load(filename);
+
+  glGenTextures(1, &_id);
+  glBindTexture(GL_TEXTURE_2D, _id);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, surface->w, surface->h, 0, GL_RGBA, GL_UNSIGNED_BYTE, surface->pixels);
+
+  SDL_FreeSurface(surface);
+}
+
+void Texture::use() const
+{
+  glBindTexture(GL_TEXTURE_2D, _id);
 }
 
 Program build_program()
@@ -370,9 +421,16 @@ void iterate()
 
   glm::mat4 mvp = projection * view * model;
 
+  glBindTexture(GL_TEXTURE_2D, 0);
   cube1->draw(mvp);
+
+  suzanne_tex->use();
   suzanne1->draw(mvp);
+
+  glBindTexture(GL_TEXTURE_2D, 0);
   teapot1->draw(mvp);
+
+  bunny_tex->use();
   bunny1->draw(mvp);
 }
 
