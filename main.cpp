@@ -204,7 +204,10 @@ Model::Model(const char *const filename)
 {
   std::ifstream file(filename, std::ios::in);
 
+  std::vector<glm::vec3> tmp_positions;
   std::vector<glm::vec3> tmp_normals;
+
+  size_t index = 0;
 
   std::string line;
   while (std::getline(file, line))
@@ -213,8 +216,7 @@ Model::Model(const char *const filename)
     {
       glm::vec3 v;
       sscanf(line.data(), "v %f %f %f", &v.x, &v.y, &v.z);
-      positions.push_back(v);
-      normals.resize(positions.size());
+      tmp_positions.push_back(v);
     }
     else
     if (line.substr(0, 3) == "vn ")
@@ -226,14 +228,16 @@ Model::Model(const char *const filename)
     else
     if (line.substr(0, 2) == "f ")
     {
-      GLushort a_v, a_n, b_v, b_n, c_v, c_n;
-      sscanf(line.data(), "f %hu//%hu %hu//%hu %hu//%hu", &a_v, &a_n, &b_v, &b_n, &c_v, &c_n);
-      normals[a_v - 1] = tmp_normals[a_n - 1];
-      normals[b_v - 1] = tmp_normals[b_n - 1];
-      normals[c_v - 1] = tmp_normals[c_n - 1];
-      elements.push_back(a_v - 1);
-      elements.push_back(b_v - 1);
-      elements.push_back(c_v - 1);
+      GLushort v[3];
+      GLushort vn[3];
+      sscanf(line.data(), "f %hu//%hu %hu//%hu %hu//%hu", &v[0], &vn[0], &v[1], &vn[1], &v[2], &vn[2]);
+
+      for (int i = 0; i < 3; ++i)
+      {
+        elements.push_back(index++);
+        positions.push_back(tmp_positions[v[i] - 1]);
+        normals.push_back(tmp_normals[vn[i] - 1]);
+      }
     }
   }
 
