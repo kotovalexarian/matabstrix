@@ -47,8 +47,8 @@ private:
   std::vector<GLfloat> positions;
   GLuint positions_id;
 
-  std::vector<GLfloat> colors;
-  GLuint colors_id;
+  std::vector<GLfloat> tex_coords;
+  GLuint tex_coords_id;
 
   std::vector<GLfloat> normals;
   GLuint normals_id;
@@ -216,9 +216,6 @@ Model::Model(const char *const filename)
       positions.push_back(x);
       positions.push_back(y);
       positions.push_back(z);
-      colors.push_back(0.5f);
-      colors.push_back(0.5f);
-      colors.push_back(0.5f);
       normals.resize(positions.size());
     }
     else
@@ -252,7 +249,7 @@ Model::Model(const char *const filename)
   }
 
   positions_id = create_array_buffer(GL_ARRAY_BUFFER, positions.size() * sizeof(GLfloat), positions.data());
-  colors_id = create_array_buffer(GL_ARRAY_BUFFER, colors.size() * sizeof(GLfloat), colors.data());
+  tex_coords_id = create_array_buffer(GL_ARRAY_BUFFER, tex_coords.size() * sizeof(GLfloat), tex_coords.data());
   normals_id = create_array_buffer(GL_ARRAY_BUFFER, normals.size() * sizeof(GLfloat), normals.data());
   id = create_array_buffer(GL_ELEMENT_ARRAY_BUFFER, elements.size() * sizeof(GLushort), elements.data());
 }
@@ -271,7 +268,7 @@ void Model::draw() const
   glBindBuffer(GL_ARRAY_BUFFER, positions_id);
   glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, reinterpret_cast<const GLvoid*>(0));
 
-  glBindBuffer(GL_ARRAY_BUFFER, colors_id);
+  glBindBuffer(GL_ARRAY_BUFFER, tex_coords_id);
   glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, reinterpret_cast<const GLvoid*>(0));
 
   glBindBuffer(GL_ARRAY_BUFFER, normals_id);
@@ -303,7 +300,7 @@ Program build_program()
   program.attach_shader(vertex_shader);
   program.attach_shader(fragment_shader);
   program.bind_attrib_location(0, "position");
-  program.bind_attrib_location(1, "color");
+  program.bind_attrib_location(1, "tex_coord");
   program.bind_attrib_location(2, "normal");
   program.link();
 
