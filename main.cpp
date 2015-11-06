@@ -205,9 +205,12 @@ Model::Model(const char *const filename)
   std::ifstream file(filename, std::ios::in);
 
   std::vector<glm::vec3> tmp_positions;
+  std::vector<glm::vec2> tmp_tex_coords;
   std::vector<glm::vec3> tmp_normals;
 
   size_t index = 0;
+
+  int attr_count = 0;
 
   std::string line;
   while (std::getline(file, line))
@@ -219,30 +222,55 @@ Model::Model(const char *const filename)
       tmp_positions.push_back(v);
     }
     else
+    if (line.substr(0, 3) == "vt ")
+    {
+      glm::vec2 vt;
+      sscanf(line.data(), "vt %f %f", &vt.x, &vt.y);
+      tmp_tex_coords.push_back(vt);
+    }
+    else
     if (line.substr(0, 3) == "vn ")
     {
-      glm::vec3 n;
-      sscanf(line.data(), "vn %f %f %f", &n.x, &n.y, &n.z);
-      tmp_normals.push_back(n);
+      glm::vec3 vn;
+      sscanf(line.data(), "vn %f %f %f", &vn.x, &vn.y, &vn.z);
+      tmp_normals.push_back(vn);
     }
     else
     if (line.substr(0, 2) == "f ")
     {
+      if (attr_count == 0)
+      {
+        if (line.find("//") == std::string::npos)
+          attr_count = 3;
+        else
+          attr_count = 2;
+      }
+
       GLushort v[3];
+      GLushort vt[3];
       GLushort vn[3];
-      sscanf(line.data(), "f %hu//%hu %hu//%hu %hu//%hu", &v[0], &vn[0], &v[1], &vn[1], &v[2], &vn[2]);
+
+      if (attr_count == 2)
+        sscanf(line.data(), "f %hu//%hu %hu//%hu %hu//%hu", &v[0], &vn[0], &v[1], &vn[1], &v[2], &vn[2]);
+      else
+        sscanf(line.data(), "f %hu/%hu/%hu %hu/%hu/%hu %hu/%hu/%hu", &v[0], &vt[0], &vn[0],
+                                                                     &v[1], &vt[1], &vn[1],
+                                                                     &v[2], &vt[2], &vn[2]);
 
       for (int i = 0; i < 3; ++i)
       {
-        elements.push_back(index++);
         positions.push_back(tmp_positions[v[i] - 1]);
+        if (attr_count == 3)
+          tex_coords.push_back(tmp_tex_coords[vt[i] - 1]);
         normals.push_back(tmp_normals[vn[i] - 1]);
+        elements.push_back(index++);
       }
     }
   }
 
   positions_id = create_array_buffer(GL_ARRAY_BUFFER, 3 * positions.size() * sizeof(GLfloat), positions.data());
-  tex_coords_id = create_array_buffer(GL_ARRAY_BUFFER, 2 * tex_coords.size() * sizeof(GLfloat), tex_coords.data());
+  if (attr_count == 3)
+    tex_coords_id = create_array_buffer(GL_ARRAY_BUFFER, 2 * tex_coords.size() * sizeof(GLfloat), tex_coords.data());
   normals_id = create_array_buffer(GL_ARRAY_BUFFER, 3 * normals.size() * sizeof(GLfloat), normals.data());
   id = create_array_buffer(GL_ELEMENT_ARRAY_BUFFER, elements.size() * sizeof(GLushort), elements.data());
 }
