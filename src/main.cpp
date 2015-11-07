@@ -1,6 +1,7 @@
 #include "gl.hpp"
 #include "program.hpp"
 #include "object.hpp"
+#include "transformation.hpp"
 
 #include <cstdlib>
 
@@ -24,8 +25,7 @@ static GLuint texture_uniform;
 
 static bool keys[GLFW_KEY_LAST];
 
-static float pos_x = 0, pos_y = -4;
-static float delta_z = 0, delta_x = 0;
+static Transformation camera;
 
 static Model *suzanne;
 static Model *teapot;
@@ -64,6 +64,9 @@ int main()
 
   texture_uniform = program.get_uniform_location("texture");
   glUniform1i(texture_uniform, 0);
+
+  camera.position.y = -4;
+  camera.position.z = 2;
 
   suzanne = new Model("/data/models/suzanne.obj");
   teapot = new Model("/data/models/teapot.obj");
@@ -114,26 +117,26 @@ void iterate()
 {
   if (keys['W'])
   {
-    pos_x += 0.1 * sin(glm::radians(delta_z));
-    pos_y += 0.1 * cos(glm::radians(delta_z));
+    camera.position.x += 0.1 * sin(glm::radians(camera.angles.z));
+    camera.position.y += 0.1 * cos(glm::radians(camera.angles.z));
   }
 
   if (keys['S'])
   {
-    pos_x -= 0.1 * sin(glm::radians(delta_z));
-    pos_y -= 0.1 * cos(glm::radians(delta_z));
+    camera.position.x -= 0.1 * sin(glm::radians(camera.angles.z));
+    camera.position.y -= 0.1 * cos(glm::radians(camera.angles.z));
   }
 
   if (keys['A'])
   {
-    pos_x -= 0.1 * cos(glm::radians(delta_z));
-    pos_y += 0.1 * sin(glm::radians(delta_z));
+    camera.position.x -= 0.1 * cos(glm::radians(camera.angles.z));
+    camera.position.y += 0.1 * sin(glm::radians(camera.angles.z));
   }
 
   if (keys['D'])
   {
-    pos_x += 0.1 * cos(glm::radians(delta_z));
-    pos_y -= 0.1 * sin(glm::radians(delta_z));
+    camera.position.x += 0.1 * cos(glm::radians(camera.angles.z));
+    camera.position.y -= 0.1 * sin(glm::radians(camera.angles.z));
   }
 
   suzanne1->angles.y = glfwGetTime() * 360 / 4;
@@ -142,11 +145,11 @@ void iterate()
 
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-  const glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(-pos_x, -pos_y, -2.0f));
+  const glm::mat4 model = glm::translate(glm::mat4(1.0f), -camera.position);
 
   const glm::mat4 view = glm::mat4(1.0f)
-    * glm::rotate(glm::mat4(1.0f), glm::radians(delta_x - 90), glm::vec3(1.0f, 0.0f, 0.0f))
-    * glm::rotate(glm::mat4(1.0f), glm::radians(delta_z), glm::vec3(0.0f, 0.0f, 1.0f));
+    * glm::rotate(glm::mat4(1.0f), glm::radians(camera.angles.x - 90), glm::vec3(1.0f, 0.0f, 0.0f))
+    * glm::rotate(glm::mat4(1.0f), glm::radians(camera.angles.z), glm::vec3(0.0f, 0.0f, 1.0f));
 
   const glm::mat4 projection = glm::perspective(45.0f, (float)640 / (float)480, 0.1f, 10.0f);
 
@@ -164,20 +167,20 @@ GLFWCALL void on_key(int key, int action)
 
 EM_BOOL on_em_mousemove(int event_type, const EmscriptenMouseEvent *mouse_event, void *user_data)
 {
-  delta_z += mouse_event->movementX;
-  delta_x += mouse_event->movementY;
+  camera.angles.z += mouse_event->movementX;
+  camera.angles.x += mouse_event->movementY;
 
-  if (delta_z < 0)
-    delta_z = 359;
+  if (camera.angles.z < 0)
+    camera.angles.z = 359;
   else
-  if (delta_z >= 360)
-    delta_z = 0;
+  if (camera.angles.z >= 360)
+    camera.angles.z = 0;
 
-  if (delta_x < -90)
-    delta_x = -90;
+  if (camera.angles.x < -90)
+    camera.angles.x = -90;
   else
-  if (delta_x > 90)
-    delta_x = 90;
+  if (camera.angles.x > 90)
+    camera.angles.x = 90;
 
   return true;
 }
