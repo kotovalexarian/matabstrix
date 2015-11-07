@@ -12,7 +12,7 @@ public:
   void draw(const glm::mat4 &mvp) const;
 
   glm::vec3 position;
-  glm::vec3 rotation;
+  glm::vec3 angles;
 
 private:
   const Model &_model;

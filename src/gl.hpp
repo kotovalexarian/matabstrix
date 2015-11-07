@@ -5,5 +5,6 @@
 #include <GL/glfw.h>
 
 extern GLuint mvp_uniform;
+extern GLuint local_modelview_uniform;
 
 #endif // _GL_HPP_

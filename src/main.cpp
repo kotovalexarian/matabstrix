@@ -18,6 +18,8 @@ static GLFWCALL void on_key(int key, int action);
 static EM_BOOL on_em_mousemove(int event_type, const EmscriptenMouseEvent *mouse_event, void *user_data);
 
 GLuint mvp_uniform;
+GLuint local_modelview_uniform;
+
 static GLuint texture_uniform;
 
 static bool keys[GLFW_KEY_LAST];
@@ -58,6 +60,7 @@ int main()
   program.use();
 
   mvp_uniform = program.get_uniform_location("mvp");
+  local_modelview_uniform = program.get_uniform_location("local_modelview");
 
   texture_uniform = program.get_uniform_location("texture");
   glUniform1i(texture_uniform, 0);
@@ -73,7 +76,7 @@ int main()
   teapot1 = new Object(*teapot);
   teapot1->position.x = -2.0;
   teapot1->position.z = 1.0;
-  teapot1->rotation.z = 45;
+  teapot1->angles.z = 45;
 
   bunny1 = new Object(*bunny);
   bunny1->position.x = 2.0;
@@ -133,21 +136,21 @@ void iterate()
     pos_y -= 0.1 * sin(glm::radians(delta_z));
   }
 
-  suzanne1->rotation.y = glfwGetTime() * 360 / 4;
-  teapot1->rotation.x = glfwGetTime() * 360 / 6;
-  bunny1->rotation.z = glfwGetTime() * 360 / 2;
+  suzanne1->angles.y = glfwGetTime() * 360 / 4;
+  teapot1->angles.x = glfwGetTime() * 360 / 6;
+  bunny1->angles.z = glfwGetTime() * 360 / 2;
 
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-  glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(-pos_x, -pos_y, -2.0f));
+  const glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(-pos_x, -pos_y, -2.0f));
 
-  glm::mat4 view = glm::mat4(1.0f)
+  const glm::mat4 view = glm::mat4(1.0f)
     * glm::rotate(glm::mat4(1.0f), glm::radians(delta_x - 90), glm::vec3(1.0f, 0.0f, 0.0f))
     * glm::rotate(glm::mat4(1.0f), glm::radians(delta_z), glm::vec3(0.0f, 0.0f, 1.0f));
 
-  glm::mat4 projection = glm::perspective(45.0f, (float)640 / (float)480, 0.1f, 10.0f);
+  const glm::mat4 projection = glm::perspective(45.0f, (float)640 / (float)480, 0.1f, 10.0f);
 
-  glm::mat4 mvp = projection * view * model;
+  const glm::mat4 mvp = projection * view * model;
 
   suzanne1->draw(mvp);
   teapot1->draw(mvp);
