@@ -1,3 +1,4 @@
+#include "gl.hpp"
 #include "program.hpp"
 #include "object.hpp"
 
@@ -22,7 +23,7 @@ static void iterate();
 static GLFWCALL void on_key(int key, int action);
 static EM_BOOL on_em_mousemove(int event_type, const EmscriptenMouseEvent *mouse_event, void *user_data);
 
-static GLuint mvp_uniform;
+GLuint mvp_uniform;
 static GLuint texture_uniform;
 
 static bool keys[GLFW_KEY_LAST];
