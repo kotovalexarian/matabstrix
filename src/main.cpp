@@ -33,10 +33,6 @@ static Object *suzanne1;
 static Object *teapot1;
 static Object *bunny1;
 
-static Texture *suzanne_tex;
-static Texture *teapot_tex;
-static Texture *bunny_tex;
-
 int main()
 {
   if (!glfwInit())
@@ -148,13 +144,8 @@ void iterate()
 
   glm::mat4 mvp = projection * view * model;
 
-  suzanne_tex->use();
   suzanne1->draw(mvp);
-
-  teapot_tex->use();
   teapot1->draw(mvp);
-
-  bunny_tex->use();
   bunny1->draw(mvp);
 }
 
