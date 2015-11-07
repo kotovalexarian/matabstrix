@@ -1,18 +1,17 @@
 #ifndef _OBJECT_HPP_
 #define _OBJECT_HPP_
 
+#include "transformation.hpp"
 #include "model.hpp"
 
 #include <glm/glm.hpp>
 
-class Object
+class Object :
+  public Transformation
 {
 public:
   Object(const Model &model) : _model(model) {};
   void draw(const glm::mat4 &mvp) const;
-
-  glm::vec3 position;
-  glm::vec3 angles;
 
 private:
   const Model &_model;
