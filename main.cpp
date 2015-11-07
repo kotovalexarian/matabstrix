@@ -108,6 +108,7 @@ static Object *teapot1;
 static Object *bunny1;
 
 static Texture *suzanne_tex;
+static Texture *teapot_tex;
 static Texture *bunny_tex;
 
 int main()
@@ -152,6 +153,7 @@ int main()
   bunny1->position.x = 2.0;
 
   suzanne_tex = new Texture("/data/textures/suzanne.png");
+  teapot_tex = new Texture("/data/textures/teapot.png");
   bunny_tex = new Texture("/data/textures/bunny.png");
 
   GLint u_texture = program.get_uniform_location("texture");
@@ -418,7 +420,7 @@ void iterate()
   suzanne_tex->use();
   suzanne1->draw(mvp);
 
-  glBindTexture(GL_TEXTURE_2D, 0);
+  teapot_tex->use();
   teapot1->draw(mvp);
 
   bunny_tex->use();
