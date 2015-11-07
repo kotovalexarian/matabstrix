@@ -72,6 +72,7 @@ int main()
 
   teapot1 = new Object(*teapot);
   teapot1->position.x = -2.0;
+  teapot1->position.z = 1.0;
   teapot1->rotation.z = 45;
 
   bunny1 = new Object(*bunny);
@@ -131,6 +132,10 @@ void iterate()
     pos_x += 0.1 * cos(glm::radians(delta_z));
     pos_y -= 0.1 * sin(glm::radians(delta_z));
   }
+
+  suzanne1->rotation.y = glfwGetTime() * 360 / 4;
+  teapot1->rotation.x = glfwGetTime() * 360 / 6;
+  bunny1->rotation.z = glfwGetTime() * 360 / 2;
 
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
