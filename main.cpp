@@ -148,14 +148,15 @@ int main()
   cube1->position.y = -4.0;
 
   suzanne1 = new Object(*suzanne);
-  suzanne1->position.z = -1;
+  suzanne1->position.y = 2;
+  suzanne1->position.z = 2;
 
   teapot1 = new Object(*teapot);
-  teapot1->position.x = -3.0;
-  teapot1->rotation.z = -45;
+  teapot1->position.x = -2.0;
+  teapot1->rotation.z = 45;
 
   bunny1 = new Object(*bunny);
-  bunny1->position.x = 3.0;
+  bunny1->position.x = 2.0;
 
   suzanne_tex = new Texture("/data/textures/suzanne.png");
   bunny_tex = new Texture("/data/textures/bunny.png");
@@ -336,7 +337,7 @@ void Model::draw() const
 
 void Object::draw(const glm::mat4 &mvp) const
 {
-  const glm::mat4 transform = glm::translate(mvp, -position)
+  const glm::mat4 transform = glm::translate(mvp, position)
     * glm::rotate(glm::mat4(1.0f), glm::radians(rotation.x), glm::vec3(1.0f, 0.0f, 0.0f))
     * glm::rotate(glm::mat4(1.0f), glm::radians(rotation.y), glm::vec3(0.0f, 1.0f, 0.0f))
     * glm::rotate(glm::mat4(1.0f), glm::radians(rotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
