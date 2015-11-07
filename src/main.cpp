@@ -1,3 +1,6 @@
+#include "program.hpp"
+#include "object.hpp"
+
 #include <cstdlib>
 #include <vector>
 #include <fstream>
@@ -9,92 +12,8 @@
 
 #include <SDL_image.h>
 
-#include <GL/glew.h>
-#include <GL/glfw.h>
-
 #include <emscripten/emscripten.h>
 #include <emscripten/html5.h>
-
-class Shader
-{
-public:
-  Shader(GLenum type, const char *filename);
-  inline GLuint id() const { return _id; };
-
-private:
-  GLuint _id;
-};
-
-class Program
-{
-public:
-  Program();
-  void attach_shader(const Shader &shader);
-  void bind_attrib_location(GLuint index, const GLchar *name);
-  void link();
-  void use() const;
-  GLuint get_uniform_location(const GLchar *name) const;
-
-private:
-  GLuint _id;
-};
-
-class Texture
-{
-public:
-  Texture(const char *filename);
-  void use() const;
-
-private:
-  GLuint _id;
-};
-
-class Material
-{
-public:
-  Material(const char *filename);
-  void use() const;
-
-private:
-  Texture *_texture;
-};
-
-class Model
-{
-public:
-  Model(const char *filename);
-  void draw() const;
-
-private:
-  std::vector<glm::vec3> positions;
-  GLuint positions_id;
-
-  std::vector<glm::vec2> tex_coords;
-  GLuint tex_coords_id;
-
-  std::vector<glm::vec3> normals;
-  GLuint normals_id;
-
-  std::vector<GLushort> elements;
-  GLuint id;
-
-  Material *_material;
-
-  static GLuint create_array_buffer(GLenum type, GLsizeiptr size, const GLvoid *data);
-};
-
-class Object
-{
-public:
-  Object(const Model &model) : _model(model) {};
-  void draw(const glm::mat4 &mvp) const;
-
-  glm::vec3 position;
-  glm::vec3 rotation;
-
-private:
-  const Model &_model;
-};
 
 static Program build_program();
 
