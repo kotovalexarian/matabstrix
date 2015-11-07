@@ -1,5 +1,4 @@
 #include <cstdlib>
-
 #include <vector>
 #include <fstream>
 #include <sstream>
@@ -40,6 +39,26 @@ private:
   GLuint _id;
 };
 
+class Texture
+{
+public:
+  Texture(const char *filename);
+  void use() const;
+
+private:
+  GLuint _id;
+};
+
+class Material
+{
+public:
+  Material(const char *filename);
+  void use() const;
+
+private:
+  Texture *_texture;
+};
+
 class Model
 {
 public:
@@ -59,6 +78,8 @@ private:
   std::vector<GLushort> elements;
   GLuint id;
 
+  Material *_material;
+
   static GLuint create_array_buffer(GLenum type, GLsizeiptr size, const GLvoid *data);
 };
 
@@ -75,16 +96,6 @@ private:
   const Model &_model;
 };
 
-class Texture
-{
-public:
-  Texture(const char *filename);
-  void use() const;
-
-private:
-  GLuint _id;
-};
-
 static Program build_program();
 
 static void iterate();
@@ -92,7 +103,8 @@ static void iterate();
 static GLFWCALL void on_key(int key, int action);
 static EM_BOOL on_em_mousemove(int event_type, const EmscriptenMouseEvent *mouse_event, void *user_data);
 
-static GLuint mvp_id;
+static GLuint mvp_uniform;
+static GLuint texture_uniform;
 
 static bool keys[GLFW_KEY_LAST];
 
@@ -135,7 +147,10 @@ int main()
   Program program = build_program();
   program.use();
 
-  mvp_id = program.get_uniform_location("mvp");
+  mvp_uniform = program.get_uniform_location("mvp");
+
+  texture_uniform = program.get_uniform_location("texture");
+  glUniform1i(texture_uniform, 0);
 
   suzanne = new Model("/data/models/suzanne.obj");
   teapot = new Model("/data/models/teapot.obj");
@@ -151,13 +166,6 @@ int main()
 
   bunny1 = new Object(*bunny);
   bunny1->position.x = 2.0;
-
-  suzanne_tex = new Texture("/data/textures/suzanne.png");
-  teapot_tex = new Texture("/data/textures/teapot.png");
-  bunny_tex = new Texture("/data/textures/bunny.png");
-
-  GLint u_texture = program.get_uniform_location("texture");
-  glUniform1i(u_texture, 0);
 
   glViewport(0, 0, 640, 480);
 
@@ -285,6 +293,11 @@ Model::Model(const char *const filename)
         elements.push_back(index++);
       }
     }
+    else
+    if (line.substr(0, 7) == "mtllib ")
+    {
+      _material = new Material(line.substr(7).c_str());
+    }
   }
 
   positions_id = create_array_buffer(GL_ARRAY_BUFFER, 3 * positions.size() * sizeof(GLfloat), positions.data());
@@ -310,6 +323,8 @@ GLuint Model::create_array_buffer(const GLenum type, const GLsizeiptr size, cons
 
 void Model::draw() const
 {
+  _material->use();
+
   glBindBuffer(GL_ARRAY_BUFFER, positions_id);
   glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, reinterpret_cast<const GLvoid*>(0));
 
@@ -337,14 +352,14 @@ void Object::draw(const glm::mat4 &mvp) const
     * glm::rotate(glm::mat4(1.0f), glm::radians(rotation.y), glm::vec3(0.0f, 1.0f, 0.0f))
     * glm::rotate(glm::mat4(1.0f), glm::radians(rotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
 
-  glUniformMatrix4fv(mvp_id, 1, GL_FALSE, glm::value_ptr(transform));
+  glUniformMatrix4fv(mvp_uniform, 1, GL_FALSE, glm::value_ptr(transform));
 
   _model.draw();
 }
 
 Texture::Texture(const char *const filename)
 {
-  SDL_Surface *surface = IMG_Load(filename);
+  SDL_Surface *surface = IMG_Load((std::string("/data/textures/") + filename).c_str());
 
   glGenTextures(1, &_id);
   glBindTexture(GL_TEXTURE_2D, _id);
@@ -357,6 +372,25 @@ Texture::Texture(const char *const filename)
 void Texture::use() const
 {
   glBindTexture(GL_TEXTURE_2D, _id);
+}
+
+Material::Material(const char *const filename)
+{
+  std::ifstream file(std::string("/data/materials/") + filename, std::ios::in);
+
+  std::string line;
+  while (std::getline(file, line))
+  {
+    if (line.substr(0, 7) == "map_Kd ")
+    {
+      _texture = new Texture(line.substr(7).c_str());
+    }
+  }
+}
+
+void Material::use() const
+{
+  _texture->use();
 }
 
 Program build_program()
