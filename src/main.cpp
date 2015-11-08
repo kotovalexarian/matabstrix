@@ -65,21 +65,21 @@ int main()
   texture_uniform = program.get_uniform_location("texture");
   glUniform1i(texture_uniform, 0);
 
-  camera.position.y = -4;
-  camera.position.z = 2;
+  camera.position.z = 4;
+  camera.position.y = 2;
 
   suzanne = new Model("/data/models/suzanne.obj");
   teapot = new Model("/data/models/teapot.obj");
   bunny = new Model("/data/models/bunny.obj");
 
   suzanne1 = new Object(*suzanne);
+  suzanne1->position.z = -2;
   suzanne1->position.y = 2;
-  suzanne1->position.z = 2;
 
   teapot1 = new Object(*teapot);
   teapot1->position.x = -2.0;
-  teapot1->position.z = 1.0;
-  teapot1->angles.z = 45;
+  teapot1->position.y = 1.0;
+  teapot1->angles.y = 45;
 
   bunny1 = new Object(*bunny);
   bunny1->position.x = 2.0;
@@ -117,39 +117,39 @@ void iterate()
 {
   if (keys['W'])
   {
-    camera.position.x += 0.1 * sin(glm::radians(camera.angles.z));
-    camera.position.y += 0.1 * cos(glm::radians(camera.angles.z));
+    camera.position.z -= 0.1 * cos(glm::radians(camera.angles.y));
+    camera.position.x += 0.1 * sin(glm::radians(camera.angles.y));
   }
 
   if (keys['S'])
   {
-    camera.position.x -= 0.1 * sin(glm::radians(camera.angles.z));
-    camera.position.y -= 0.1 * cos(glm::radians(camera.angles.z));
-  }
-
-  if (keys['A'])
-  {
-    camera.position.x -= 0.1 * cos(glm::radians(camera.angles.z));
-    camera.position.y += 0.1 * sin(glm::radians(camera.angles.z));
+    camera.position.z += 0.1 * cos(glm::radians(camera.angles.y));
+    camera.position.x -= 0.1 * sin(glm::radians(camera.angles.y));
   }
 
   if (keys['D'])
   {
-    camera.position.x += 0.1 * cos(glm::radians(camera.angles.z));
-    camera.position.y -= 0.1 * sin(glm::radians(camera.angles.z));
+    camera.position.z += 0.1 * sin(glm::radians(camera.angles.y));
+    camera.position.x += 0.1 * cos(glm::radians(camera.angles.y));
   }
 
-  suzanne1->angles.y = glfwGetTime() * 360 / 4;
+  if (keys['A'])
+  {
+    camera.position.z -= 0.1 * sin(glm::radians(camera.angles.y));
+    camera.position.x -= 0.1 * cos(glm::radians(camera.angles.y));
+  }
+
+  suzanne1->angles.z = glfwGetTime() * 360 / 4;
   teapot1->angles.x = glfwGetTime() * 360 / 6;
-  bunny1->angles.z = glfwGetTime() * 360 / 2;
+  bunny1->angles.y = glfwGetTime() * 360 / 2;
 
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
   const glm::mat4 model = glm::translate(glm::mat4(1.0f), -camera.position);
 
   const glm::mat4 view = glm::mat4(1.0f)
-    * glm::rotate(glm::mat4(1.0f), glm::radians(camera.angles.x - 90), glm::vec3(1.0f, 0.0f, 0.0f))
-    * glm::rotate(glm::mat4(1.0f), glm::radians(camera.angles.z), glm::vec3(0.0f, 0.0f, 1.0f));
+    * glm::rotate(glm::mat4(1.0f), glm::radians(camera.angles.x), glm::vec3(1.0f, 0.0f, 0.0f))
+    * glm::rotate(glm::mat4(1.0f), glm::radians(camera.angles.y), glm::vec3(0.0f, 1.0f, 0.0f));
 
   const glm::mat4 projection = glm::perspective(45.0f, (float)640 / (float)480, 0.1f, 10.0f);
 
@@ -167,14 +167,14 @@ GLFWCALL void on_key(int key, int action)
 
 EM_BOOL on_em_mousemove(int event_type, const EmscriptenMouseEvent *mouse_event, void *user_data)
 {
-  camera.angles.z += mouse_event->movementX;
+  camera.angles.y += mouse_event->movementX;
   camera.angles.x += mouse_event->movementY;
 
-  if (camera.angles.z < 0)
-    camera.angles.z = 359;
+  if (camera.angles.y < 0)
+    camera.angles.y = 359;
   else
-  if (camera.angles.z >= 360)
-    camera.angles.z = 0;
+  if (camera.angles.y >= 360)
+    camera.angles.y = 0;
 
   if (camera.angles.x < -90)
     camera.angles.x = -90;
