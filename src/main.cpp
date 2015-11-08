@@ -1,7 +1,7 @@
 #include "gl.hpp"
 #include "program.hpp"
 #include "object.hpp"
-#include "transformation.hpp"
+#include "camera.hpp"
 
 #include <cstdlib>
 
@@ -25,7 +25,7 @@ static GLuint texture_uniform;
 
 static bool keys[GLFW_KEY_LAST];
 
-static Transformation camera;
+static Camera camera;
 
 static Model *suzanne;
 static Model *teapot;
@@ -65,6 +65,7 @@ int main()
   texture_uniform = program.get_uniform_location("texture");
   glUniform1i(texture_uniform, 0);
 
+  camera.projection = glm::perspective(45.0f, (float)640 / (float)480, 0.1f, 10.0f);
   camera.position.z = 4;
   camera.position.y = 2;
 
@@ -145,9 +146,7 @@ void iterate()
 
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-  const glm::mat4 projection = glm::perspective(45.0f, (float)640 / (float)480, 0.1f, 10.0f);
-
-  const glm::mat4 mvp = projection * glm::inverse(camera.transformation());
+  const glm::mat4 mvp = camera.transformation();
 
   suzanne1->draw(mvp);
   teapot1->draw(mvp);
