@@ -117,26 +117,26 @@ void iterate()
 {
   if (keys['W'])
   {
+    camera.position.x -= 0.1 * sin(glm::radians(camera.angles.y));
     camera.position.z -= 0.1 * cos(glm::radians(camera.angles.y));
-    camera.position.x += 0.1 * sin(glm::radians(camera.angles.y));
   }
 
   if (keys['S'])
   {
+    camera.position.x += 0.1 * sin(glm::radians(camera.angles.y));
     camera.position.z += 0.1 * cos(glm::radians(camera.angles.y));
-    camera.position.x -= 0.1 * sin(glm::radians(camera.angles.y));
   }
 
   if (keys['D'])
   {
-    camera.position.z += 0.1 * sin(glm::radians(camera.angles.y));
     camera.position.x += 0.1 * cos(glm::radians(camera.angles.y));
+    camera.position.z -= 0.1 * sin(glm::radians(camera.angles.y));
   }
 
   if (keys['A'])
   {
-    camera.position.z -= 0.1 * sin(glm::radians(camera.angles.y));
     camera.position.x -= 0.1 * cos(glm::radians(camera.angles.y));
+    camera.position.z += 0.1 * sin(glm::radians(camera.angles.y));
   }
 
   suzanne1->angles.z = glfwGetTime() * 360 / 4;
@@ -145,15 +145,9 @@ void iterate()
 
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-  const glm::mat4 model = glm::translate(glm::mat4(1.0f), -camera.position);
-
-  const glm::mat4 view = glm::mat4(1.0f)
-    * glm::rotate(glm::mat4(1.0f), glm::radians(camera.angles.x), glm::vec3(1.0f, 0.0f, 0.0f))
-    * glm::rotate(glm::mat4(1.0f), glm::radians(camera.angles.y), glm::vec3(0.0f, 1.0f, 0.0f));
-
   const glm::mat4 projection = glm::perspective(45.0f, (float)640 / (float)480, 0.1f, 10.0f);
 
-  const glm::mat4 mvp = projection * view * model;
+  const glm::mat4 mvp = projection * glm::inverse(camera.transformation());
 
   suzanne1->draw(mvp);
   teapot1->draw(mvp);
@@ -167,8 +161,8 @@ GLFWCALL void on_key(int key, int action)
 
 EM_BOOL on_em_mousemove(int event_type, const EmscriptenMouseEvent *mouse_event, void *user_data)
 {
-  camera.angles.y += mouse_event->movementX;
-  camera.angles.x += mouse_event->movementY;
+  camera.angles.y -= mouse_event->movementX;
+  camera.angles.x -= mouse_event->movementY;
 
   if (camera.angles.y < 0)
     camera.angles.y = 359;
