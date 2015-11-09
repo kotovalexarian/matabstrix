@@ -3,16 +3,17 @@
 
 #include "texture.hpp"
 
-#include <string>
-
 class Material
 {
 public:
-  Material(const std::string &name);
-  void use() const;
+  inline void use() const;
 
-private:
-  Texture *_texture;
+  Texture *texture;
+};
+
+void Material::use() const
+{
+  texture->use();
 };
 
 #endif // _MATERIAL_HPP_

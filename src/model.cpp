@@ -1,11 +1,15 @@
 #include "model.hpp"
 
+#include "mtllib.hpp"
+
 #include <fstream>
 #include <sstream>
 
 Model::Model(const std::string &name)
 {
   std::ifstream file("/data/models/" + name, std::ios::in);
+
+  Mtllib *mtllib = nullptr;
 
   std::vector<glm::vec3> tmp_positions;
   std::vector<glm::vec2> tmp_tex_coords;
@@ -72,7 +76,12 @@ Model::Model(const std::string &name)
     else
     if (line.substr(0, 7) == "mtllib ")
     {
-      _material = new Material(line.substr(7).c_str());
+      mtllib = new Mtllib(line.substr(7));
+    }
+    else
+    if (line.substr(0, 7) == "usemtl ")
+    {
+      _material = mtllib->materials[line.substr(7)];
     }
   }
 
