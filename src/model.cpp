@@ -3,9 +3,9 @@
 #include <fstream>
 #include <sstream>
 
-Model::Model(const char *const filename)
+Model::Model(const std::string &name)
 {
-  std::ifstream file(filename, std::ios::in);
+  std::ifstream file("/data/models/" + name, std::ios::in);
 
   std::vector<glm::vec3> tmp_positions;
   std::vector<glm::vec2> tmp_tex_coords;

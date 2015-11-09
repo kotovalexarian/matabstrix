@@ -67,9 +67,9 @@ int main()
   camera.position.z = 4;
   camera.position.y = 2;
 
-  suzanne = new Model("/data/models/suzanne.obj");
-  teapot = new Model("/data/models/teapot.obj");
-  bunny = new Model("/data/models/bunny.obj");
+  suzanne = new Model("suzanne.obj");
+  teapot = new Model("teapot.obj");
+  bunny = new Model("bunny.obj");
 
   suzanne1 = new Object(*suzanne);
   suzanne1->position.z = -2;

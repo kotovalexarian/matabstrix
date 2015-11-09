@@ -3,10 +3,12 @@
 
 #include "gl.hpp"
 
+#include <string>
+
 class Texture
 {
 public:
-  Texture(const char *filename);
+  Texture(const std::string &name);
   void use() const;
 
 private:

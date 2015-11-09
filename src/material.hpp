@@ -3,10 +3,12 @@
 
 #include "texture.hpp"
 
+#include <string>
+
 class Material
 {
 public:
-  Material(const char *filename);
+  Material(const std::string &name);
   void use() const;
 
 private:

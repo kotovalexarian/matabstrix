@@ -3,9 +3,9 @@
 #include <string>
 #include <fstream>
 
-Material::Material(const char *const filename)
+Material::Material(const std::string &name)
 {
-  std::ifstream file(std::string("/data/materials/") + filename, std::ios::in);
+  std::ifstream file("/data/materials/" + name, std::ios::in);
 
   std::string line;
   while (std::getline(file, line))

@@ -4,6 +4,7 @@
 #include "gl.hpp"
 #include "material.hpp"
 
+#include <string>
 #include <vector>
 
 #include <glm/glm.hpp>
@@ -11,7 +12,7 @@
 class Model
 {
 public:
-  Model(const char *filename);
+  Model(const std::string &name);
   void draw() const;
 
 private:
