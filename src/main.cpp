@@ -94,25 +94,25 @@ int main()
 
 void iterate()
 {
-  if (keys['W'])
+  if (keys[(unsigned char)'W'])
   {
     camera.position.x -= 0.1 * sin(glm::radians(camera.angles.y));
     camera.position.z -= 0.1 * cos(glm::radians(camera.angles.y));
   }
 
-  if (keys['S'])
+  if (keys[(unsigned char)'S'])
   {
     camera.position.x += 0.1 * sin(glm::radians(camera.angles.y));
     camera.position.z += 0.1 * cos(glm::radians(camera.angles.y));
   }
 
-  if (keys['D'])
+  if (keys[(unsigned char)'D'])
   {
     camera.position.x += 0.1 * cos(glm::radians(camera.angles.y));
     camera.position.z -= 0.1 * sin(glm::radians(camera.angles.y));
   }
 
-  if (keys['A'])
+  if (keys[(unsigned char)'A'])
   {
     camera.position.x -= 0.1 * cos(glm::radians(camera.angles.y));
     camera.position.z += 0.1 * sin(glm::radians(camera.angles.y));
@@ -136,7 +136,9 @@ GLFWCALL void on_key(int key, int action)
   keys[key] = action != GLFW_RELEASE;
 }
 
-EM_BOOL on_em_mousemove(int event_type, const EmscriptenMouseEvent *mouse_event, void *user_data)
+EM_BOOL on_em_mousemove(__attribute__((unused)) int event_type,
+                        const EmscriptenMouseEvent *mouse_event,
+                        __attribute__((unused)) void *user_data)
 {
   camera.angles.y -= mouse_event->movementX;
   camera.angles.x -= mouse_event->movementY;
