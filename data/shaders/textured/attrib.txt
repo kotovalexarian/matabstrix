@@ -1,0 +1,3 @@
+position
+tex_coord
+normal

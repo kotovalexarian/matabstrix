@@ -11,8 +11,6 @@
 #include <emscripten/emscripten.h>
 #include <emscripten/html5.h>
 
-static Program build_program();
-
 static void iterate();
 
 static GLFWCALL void on_key(int key, int action);
@@ -56,7 +54,7 @@ int main()
   glfwSetKeyCallback(on_key);
   emscripten_set_mousemove_callback(nullptr, nullptr, false, on_em_mousemove);
 
-  Program program = build_program();
+  Program program("textured");
   program.use();
 
   mvp_uniform = program.get_uniform_location("mvp");
@@ -92,26 +90,6 @@ int main()
   glClearColor(1, 1, 1, 0);
 
   emscripten_set_main_loop(iterate, 0, 1);
-}
-
-Program build_program()
-{
-  const Shader vertex_shader = Shader(GL_VERTEX_SHADER, "/data/shaders/vertex.glsl");
-  const Shader fragment_shader = Shader(GL_FRAGMENT_SHADER, "/data/shaders/fragment.glsl");
-
-  Program program;
-  program.attach_shader(vertex_shader);
-  program.attach_shader(fragment_shader);
-  program.bind_attrib_location(0, "position");
-  program.bind_attrib_location(1, "tex_coord");
-  program.bind_attrib_location(2, "normal");
-  program.link();
-
-  glEnableVertexAttribArray(0);
-  glEnableVertexAttribArray(1);
-  glEnableVertexAttribArray(2);
-
-  return program;
 }
 
 void iterate()
