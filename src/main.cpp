@@ -28,10 +28,6 @@ static Scene scene;
 static Camera camera(scene);
 static float camera_angles_x = 0;
 
-static Camera camera1(scene);
-static Camera camera2(scene);
-static Camera camera3(scene);
-
 static Model *protagonist;
 static Model *suzanne;
 static Model *teapot;
@@ -75,20 +71,6 @@ int main()
   camera.projection = glm::perspective(45.0f, (float)640 / (float)480, 0.1f, 10.0f);
   camera.position.z = 2;
 
-  camera1.projection = camera.projection;
-  camera1.position.y = 1.5;
-  camera1.position.x = -5;
-  camera1.angles.y = -90;
-
-  camera2.projection = camera.projection;
-  camera2.position.y = 1.5;
-  camera2.position.z = -5;
-  camera2.angles.y = -180;
-
-  camera3.projection = camera.projection;
-  camera3.position.y = -5;
-  camera3.angles.x = 90;
-
   protagonist = new Model("protagonist.obj");
   suzanne = new Model("suzanne.obj");
   teapot = new Model("teapot.obj");
@@ -113,6 +95,8 @@ int main()
         << suzanne1
         << teapot1
         << bunny1;
+
+  glViewport(0, 0, 640, 480);
 
   glEnable(GL_DEPTH_TEST);
 
@@ -157,17 +141,7 @@ void iterate()
 
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-  glViewport(0, 0, 640 / 2, 480 / 2);
   camera.draw();
-
-  glViewport(640 / 2, 0, 640 / 2, 480 / 2);
-  camera1.draw();
-
-  glViewport(640 / 2, 480 / 2, 640 / 2, 480 / 2);
-  camera2.draw();
-
-  glViewport(0, 480 / 2, 640 / 2, 480 / 2);
-  camera3.draw();
 }
 
 GLFWCALL void on_key(int key, int action)
