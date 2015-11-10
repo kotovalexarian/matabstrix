@@ -30,10 +30,12 @@ static Camera camera1(scene);
 static Camera camera2(scene);
 static Camera camera3(scene);
 
+static Model *protagonist;
 static Model *suzanne;
 static Model *teapot;
 static Model *bunny;
 
+static Object *protagonist1;
 static Object *suzanne1;
 static Object *teapot1;
 static Object *bunny1;
@@ -86,9 +88,13 @@ int main()
   camera3.position.y = -5;
   camera3.angles.x = 90;
 
+  protagonist = new Model("protagonist.obj");
   suzanne = new Model("suzanne.obj");
   teapot = new Model("teapot.obj");
   bunny = new Model("bunny.obj");
+
+  protagonist1 = new Object(*protagonist);
+  protagonist1->position.z = 4;
 
   suzanne1 = new Object(*suzanne);
   suzanne1->position.z = -2;
@@ -102,7 +108,10 @@ int main()
   bunny1 = new Object(*bunny);
   bunny1->position.x = 2.0;
 
-  scene << suzanne1 << teapot1 << bunny1;
+  scene << protagonist1
+        << suzanne1
+        << teapot1
+        << bunny1;
 
   glEnable(GL_DEPTH_TEST);
 
