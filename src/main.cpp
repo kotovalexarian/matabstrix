@@ -24,6 +24,9 @@ static GLuint texture_uniform;
 static bool keys[GLFW_KEY_LAST];
 
 static Camera camera;
+static Camera camera1;
+static Camera camera2;
+static Camera camera3;
 
 static Model *suzanne;
 static Model *teapot;
@@ -67,6 +70,20 @@ int main()
   camera.position.z = 4;
   camera.position.y = 2;
 
+  camera1.projection = camera.projection;
+  camera1.position.y = 1.5;
+  camera1.position.x = -5;
+  camera1.angles.y = -90;
+
+  camera2.projection = camera.projection;
+  camera2.position.y = 1.5;
+  camera2.position.z = -5;
+  camera2.angles.y = -180;
+
+  camera3.projection = camera.projection;
+  camera3.position.y = -5;
+  camera3.angles.x = 90;
+
   suzanne = new Model("suzanne.obj");
   teapot = new Model("teapot.obj");
   bunny = new Model("bunny.obj");
@@ -82,8 +99,6 @@ int main()
 
   bunny1 = new Object(*bunny);
   bunny1->position.x = 2.0;
-
-  glViewport(0, 0, 640, 480);
 
   glEnable(GL_DEPTH_TEST);
 
@@ -125,10 +140,29 @@ void iterate()
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
   const glm::mat4 mvp = camera.transformation();
+  const glm::mat4 mvp1 = camera1.transformation();
+  const glm::mat4 mvp2 = camera2.transformation();
+  const glm::mat4 mvp3 = camera3.transformation();
 
+  glViewport(0, 0, 640 / 2, 480 / 2);
   suzanne1->draw(mvp);
   teapot1->draw(mvp);
   bunny1->draw(mvp);
+
+  glViewport(640 / 2, 0, 640 / 2, 480 / 2);
+  suzanne1->draw(mvp1);
+  teapot1->draw(mvp1);
+  bunny1->draw(mvp1);
+
+  glViewport(640 / 2, 480 / 2, 640 / 2, 480 / 2);
+  suzanne1->draw(mvp2);
+  teapot1->draw(mvp2);
+  bunny1->draw(mvp2);
+
+  glViewport(0, 480 / 2, 640 / 2, 480 / 2);
+  suzanne1->draw(mvp3);
+  teapot1->draw(mvp3);
+  bunny1->draw(mvp3);
 }
 
 GLFWCALL void on_key(int key, int action)
