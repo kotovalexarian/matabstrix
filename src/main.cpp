@@ -1,6 +1,6 @@
 #include "gl.hpp"
 #include "program.hpp"
-#include "object.hpp"
+#include "scene.hpp"
 #include "camera.hpp"
 
 #include <cstdlib>
@@ -22,6 +22,8 @@ GLuint local_modelview_uniform;
 static GLuint texture_uniform;
 
 static bool keys[GLFW_KEY_LAST];
+
+static Scene scene;
 
 static Camera camera;
 static Camera camera1;
@@ -100,6 +102,8 @@ int main()
   bunny1 = new Object(*bunny);
   bunny1->position.x = 2.0;
 
+  scene << suzanne1 << teapot1 << bunny1;
+
   glEnable(GL_DEPTH_TEST);
 
   glClearColor(1, 1, 1, 0);
@@ -145,24 +149,16 @@ void iterate()
   const glm::mat4 mvp3 = camera3.transformation();
 
   glViewport(0, 0, 640 / 2, 480 / 2);
-  suzanne1->draw(mvp);
-  teapot1->draw(mvp);
-  bunny1->draw(mvp);
+  scene.draw(mvp);
 
   glViewport(640 / 2, 0, 640 / 2, 480 / 2);
-  suzanne1->draw(mvp1);
-  teapot1->draw(mvp1);
-  bunny1->draw(mvp1);
+  scene.draw(mvp1);
 
   glViewport(640 / 2, 480 / 2, 640 / 2, 480 / 2);
-  suzanne1->draw(mvp2);
-  teapot1->draw(mvp2);
-  bunny1->draw(mvp2);
+  scene.draw(mvp2);
 
   glViewport(0, 480 / 2, 640 / 2, 480 / 2);
-  suzanne1->draw(mvp3);
-  teapot1->draw(mvp3);
-  bunny1->draw(mvp3);
+  scene.draw(mvp3);
 }
 
 GLFWCALL void on_key(int key, int action)
