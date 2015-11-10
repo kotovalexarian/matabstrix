@@ -124,27 +124,34 @@ void iterate()
 {
   if (keys[(unsigned char)'W'])
   {
-    camera.position.x -= 0.1 * sin(glm::radians(camera.angles.y));
-    camera.position.z -= 0.1 * cos(glm::radians(camera.angles.y));
+    protagonist1->position.x -= 0.1 * sin(glm::radians(protagonist1->angles.y));
+    protagonist1->position.z -= 0.1 * cos(glm::radians(protagonist1->angles.y));
   }
 
   if (keys[(unsigned char)'S'])
   {
-    camera.position.x += 0.1 * sin(glm::radians(camera.angles.y));
-    camera.position.z += 0.1 * cos(glm::radians(camera.angles.y));
+    protagonist1->position.x += 0.1 * sin(glm::radians(protagonist1->angles.y));
+    protagonist1->position.z += 0.1 * cos(glm::radians(protagonist1->angles.y));
   }
 
   if (keys[(unsigned char)'D'])
   {
-    camera.position.x += 0.1 * cos(glm::radians(camera.angles.y));
-    camera.position.z -= 0.1 * sin(glm::radians(camera.angles.y));
+    protagonist1->position.x += 0.1 * cos(glm::radians(protagonist1->angles.y));
+    protagonist1->position.z -= 0.1 * sin(glm::radians(protagonist1->angles.y));
   }
 
   if (keys[(unsigned char)'A'])
   {
-    camera.position.x -= 0.1 * cos(glm::radians(camera.angles.y));
-    camera.position.z += 0.1 * sin(glm::radians(camera.angles.y));
+    protagonist1->position.x -= 0.1 * cos(glm::radians(protagonist1->angles.y));
+    protagonist1->position.z += 0.1 * sin(glm::radians(protagonist1->angles.y));
   }
+
+  camera.position = protagonist1->position;
+  camera.position.y += 2.0;
+  camera.angles.y = protagonist1->angles.y;
+
+  camera.position.x += 2.0 * sin(glm::radians(protagonist1->angles.y));
+  camera.position.z += 2.0 * cos(glm::radians(protagonist1->angles.y));
 
   suzanne1->angles.z = glfwGetTime() * 360 / 4;
   teapot1->angles.x = glfwGetTime() * 360 / 6;
@@ -174,14 +181,14 @@ EM_BOOL on_em_mousemove(__attribute__((unused)) int event_type,
                         const EmscriptenMouseEvent *mouse_event,
                         __attribute__((unused)) void *user_data)
 {
-  camera.angles.y -= mouse_event->movementX;
+  protagonist1->angles.y -= mouse_event->movementX;
   camera.angles.x -= mouse_event->movementY;
 
-  if (camera.angles.y < 0)
-    camera.angles.y = 359;
+  if (protagonist1->angles.y < 0)
+    protagonist1->angles.y = 359;
   else
-  if (camera.angles.y >= 360)
-    camera.angles.y = 0;
+  if (protagonist1->angles.y >= 360)
+    protagonist1->angles.y = 0;
 
   if (camera.angles.x < -90)
     camera.angles.x = -90;
