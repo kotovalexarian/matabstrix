@@ -26,6 +26,8 @@ static bool keys[GLFW_KEY_LAST];
 static Scene scene;
 
 static Camera camera(scene);
+static float camera_angles_x = 0;
+
 static Camera camera1(scene);
 static Camera camera2(scene);
 static Camera camera3(scene);
@@ -71,8 +73,7 @@ int main()
   glUniform1i(texture_uniform, 0);
 
   camera.projection = glm::perspective(45.0f, (float)640 / (float)480, 0.1f, 10.0f);
-  camera.position.z = 4;
-  camera.position.y = 2;
+  camera.position.z = 2;
 
   camera1.projection = camera.projection;
   camera1.position.y = 1.5;
@@ -146,12 +147,9 @@ void iterate()
     protagonist1->position.z += 0.1 * sin(glm::radians(protagonist1->angles.y));
   }
 
-  camera.position = protagonist1->position;
-  camera.position.y += 2.0;
-  camera.angles.y = protagonist1->angles.y;
-
-  camera.position.x += 2.0 * sin(glm::radians(protagonist1->angles.y));
-  camera.position.z += 2.0 * cos(glm::radians(protagonist1->angles.y));
+  camera.base = protagonist1->transformation()
+    * glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 2.0f, 0.0f))
+    * glm::rotate(glm::mat4(1.0f), glm::radians(camera_angles_x), glm::vec3(1.0f, 0.0f, 0.0f));
 
   suzanne1->angles.z = glfwGetTime() * 360 / 4;
   teapot1->angles.x = glfwGetTime() * 360 / 6;
@@ -182,7 +180,7 @@ EM_BOOL on_em_mousemove(__attribute__((unused)) int event_type,
                         __attribute__((unused)) void *user_data)
 {
   protagonist1->angles.y -= mouse_event->movementX;
-  camera.angles.x -= mouse_event->movementY;
+  camera_angles_x -= mouse_event->movementY;
 
   if (protagonist1->angles.y < 0)
     protagonist1->angles.y = 359;
@@ -190,11 +188,11 @@ EM_BOOL on_em_mousemove(__attribute__((unused)) int event_type,
   if (protagonist1->angles.y >= 360)
     protagonist1->angles.y = 0;
 
-  if (camera.angles.x < -90)
-    camera.angles.x = -90;
+  if (camera_angles_x < -90)
+    camera_angles_x = -90;
   else
-  if (camera.angles.x > 90)
-    camera.angles.x = 90;
+  if (camera_angles_x > 90)
+    camera_angles_x = 90;
 
   return true;
 }

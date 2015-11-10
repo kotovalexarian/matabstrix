@@ -8,6 +8,8 @@ class Transformation
 public:
   glm::mat4 transformation() const;
 
+  glm::mat4 base;
+
   glm::vec3 position;
   glm::vec3 angles;
 };

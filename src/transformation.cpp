@@ -11,5 +11,5 @@ glm::mat4 Transformation::transformation() const
     * glm::rotate(glm::mat4(1.0f), glm::radians(angles.x), glm::vec3(1.0f, 0.0f, 0.0f))
     * glm::rotate(glm::mat4(1.0f), glm::radians(angles.z), glm::vec3(0.0f, 0.0f, 1.0f));
 
-  return translation * rotation;
+  return base * translation * rotation;
 }
