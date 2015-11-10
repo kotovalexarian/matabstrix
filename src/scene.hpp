@@ -12,7 +12,7 @@ class Scene
 public:
   inline Scene &operator <<(Object *object);
 
-  inline void draw(const glm::mat4 &mvp);
+  inline void draw(const glm::mat4 &mvp) const;
 
 private:
   std::vector<Object*> _objects;
@@ -25,7 +25,7 @@ Scene &Scene::operator <<(Object *object)
   return *this;
 }
 
-void Scene::draw(const glm::mat4 &mvp)
+void Scene::draw(const glm::mat4 &mvp) const
 {
   for (auto object : _objects)
     object->draw(mvp);

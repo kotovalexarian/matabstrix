@@ -25,10 +25,10 @@ static bool keys[GLFW_KEY_LAST];
 
 static Scene scene;
 
-static Camera camera;
-static Camera camera1;
-static Camera camera2;
-static Camera camera3;
+static Camera camera(scene);
+static Camera camera1(scene);
+static Camera camera2(scene);
+static Camera camera3(scene);
 
 static Model *suzanne;
 static Model *teapot;
@@ -143,22 +143,17 @@ void iterate()
 
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-  const glm::mat4 mvp = camera.transformation();
-  const glm::mat4 mvp1 = camera1.transformation();
-  const glm::mat4 mvp2 = camera2.transformation();
-  const glm::mat4 mvp3 = camera3.transformation();
-
   glViewport(0, 0, 640 / 2, 480 / 2);
-  scene.draw(mvp);
+  camera.draw();
 
   glViewport(640 / 2, 0, 640 / 2, 480 / 2);
-  scene.draw(mvp1);
+  camera1.draw();
 
   glViewport(640 / 2, 480 / 2, 640 / 2, 480 / 2);
-  scene.draw(mvp2);
+  camera2.draw();
 
   glViewport(0, 480 / 2, 640 / 2, 480 / 2);
-  scene.draw(mvp3);
+  camera3.draw();
 }
 
 GLFWCALL void on_key(int key, int action)
