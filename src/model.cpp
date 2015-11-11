@@ -10,7 +10,7 @@ const std::string Model::filename(const std::string &name)
   return "/data/models/" + name;
 }
 
-Model::Model(const std::string &name)
+Model::Model(Store &store, const std::string &name)
 {
   std::ifstream file(filename(name), std::ios::in);
 
@@ -81,7 +81,7 @@ Model::Model(const std::string &name)
     else
     if (line.substr(0, 7) == "mtllib ")
     {
-      mtllib = (Mtllib*)Store().load<Mtllib>(line.substr(7));
+      mtllib = (Mtllib*)store.load<Mtllib>(line.substr(7));
     }
     else
     if (line.substr(0, 7) == "usemtl ")

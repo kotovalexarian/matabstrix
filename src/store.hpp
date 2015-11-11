@@ -25,7 +25,7 @@ const T *Store::load(const std::string &name)
                 "Store can load only Resource's children");
 
   if (_resources.find(name) == _resources.end())
-    _resources[T::filename(name)] = new T(name);
+    _resources[T::filename(name)] = new T(*this, name);
 
   _resources[T::filename(name)]->_ref_count++;
   return (T*)_resources[T::filename(name)];

@@ -8,7 +8,7 @@ const std::string Mtllib::filename(const std::string &name)
   return "/data/materials/" + name;
 }
 
-Mtllib::Mtllib(const std::string &name)
+Mtllib::Mtllib(Store &store, const std::string &name)
 {
   std::ifstream file(filename(name), std::ios::in);
 
@@ -28,7 +28,7 @@ Mtllib::Mtllib(const std::string &name)
     else
     if (line.substr(0, 7) == "map_Kd ")
     {
-      material->texture = Store().load<Texture>(line.substr(7));
+      material->texture = store.load<Texture>(line.substr(7));
     }
   }
 }

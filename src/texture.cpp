@@ -9,7 +9,7 @@ const std::string Texture::filename(const std::string &name)
   return "/data/textures/" + name;
 }
 
-Texture::Texture(const std::string &name)
+Texture::Texture(__attribute__((unused)) Store &store, const std::string &name)
 {
   SDL_Surface *surface = IMG_Load(filename(name).c_str());
 

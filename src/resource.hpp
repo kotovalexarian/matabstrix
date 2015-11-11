@@ -14,7 +14,7 @@ class Resource
 #define RESOURCE(T) \
 private: \
   friend class Store; \
-  T(const std::string &name); \
+  T(Store &store, const std::string &name); \
   static const std::string filename(const std::string &name);
 
 #endif // _RESOURCE_HPP_

@@ -9,7 +9,7 @@ const std::string Program::filename(const std::string &name)
   return "/data/shaders/" + name;
 }
 
-Program::Program(const std::string &name)
+Program::Program(__attribute__((unused)) Store &store, const std::string &name)
 {
   const std::string path = filename(name) + '/';
 

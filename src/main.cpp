@@ -12,6 +12,8 @@
 #include <emscripten/emscripten.h>
 #include <emscripten/html5.h>
 
+static Store store;
+
 static void iterate();
 
 static GLFWCALL void on_key(int key, int action);
@@ -60,7 +62,7 @@ int main()
   glfwSetKeyCallback(on_key);
   emscripten_set_mousemove_callback(nullptr, nullptr, false, on_em_mousemove);
 
-  const Program *program = Store().load<Program>("textured");
+  const Program *program = store.load<Program>("textured");
   program->use();
 
   mvp_uniform = program->get_uniform_location("mvp");
@@ -72,10 +74,10 @@ int main()
   camera.projection = glm::perspective(45.0f, (float)640 / (float)480, 0.1f, 10.0f);
   camera.position.z = 2;
 
-  protagonist = Store().load<Model>("protagonist.obj");
-  suzanne = Store().load<Model>("suzanne.obj");
-  teapot = Store().load<Model>("teapot.obj");
-  bunny = Store().load<Model>("bunny.obj");
+  protagonist = store.load<Model>("protagonist.obj");
+  suzanne = store.load<Model>("suzanne.obj");
+  teapot = store.load<Model>("teapot.obj");
+  bunny = store.load<Model>("bunny.obj");
 
   protagonist1 = new Object(*protagonist);
   protagonist1->position.z = 4;
