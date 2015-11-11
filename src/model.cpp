@@ -14,7 +14,7 @@ Model::Model(Store &store, const std::string &name)
 {
   std::ifstream file(filename(name), std::ios::in);
 
-  Mtllib *mtllib = nullptr;
+  const Mtllib *mtllib = nullptr;
 
   std::vector<glm::vec3> tmp_positions;
   std::vector<glm::vec2> tmp_tex_coords;
@@ -86,7 +86,7 @@ Model::Model(Store &store, const std::string &name)
     else
     if (line.substr(0, 7) == "usemtl ")
     {
-      _material = mtllib->materials[line.substr(7)];
+      _material = (*mtllib)[line.substr(7)];
     }
   }
 

@@ -13,7 +13,10 @@ class Mtllib:
   RESOURCE(Mtllib)
 
 public:
-  std::map<std::string, const Material*> materials;
+  const Material *operator[](const std::string &name) const;
+
+private:
+  std::map<std::string, const Material*> _materials;
 };
 
 #endif // _MTLLIB_HPP_

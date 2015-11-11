@@ -23,7 +23,7 @@ Mtllib::Mtllib(Store &store, const std::string &name)
     if (line.substr(0, 7) == "newmtl ")
     {
       material = new Material();
-      materials[line.substr(7)] = material;
+      _materials[line.substr(7)] = material;
     }
     else
     if (line.substr(0, 7) == "map_Kd ")
@@ -31,4 +31,9 @@ Mtllib::Mtllib(Store &store, const std::string &name)
       material->texture = store.load<Texture>(line.substr(7));
     }
   }
+}
+
+const Material *Mtllib::operator[](const std::string &name) const
+{
+  return ((Mtllib*)this)->_materials[name];
 }
