@@ -28,10 +28,10 @@ static Scene scene;
 static Camera camera(scene);
 static float camera_angles_x = 0;
 
-static Model *protagonist;
-static Model *suzanne;
-static Model *teapot;
-static Model *bunny;
+static const Model *protagonist;
+static const Model *suzanne;
+static const Model *teapot;
+static const Model *bunny;
 
 static Object *protagonist1;
 static Object *suzanne1;
@@ -59,22 +59,22 @@ int main()
   glfwSetKeyCallback(on_key);
   emscripten_set_mousemove_callback(nullptr, nullptr, false, on_em_mousemove);
 
-  Program program("textured");
-  program.use();
+  const Program *program = Store().load<Program>("textured");
+  program->use();
 
-  mvp_uniform = program.get_uniform_location("mvp");
-  local_modelview_uniform = program.get_uniform_location("local_modelview");
+  mvp_uniform = program->get_uniform_location("mvp");
+  local_modelview_uniform = program->get_uniform_location("local_modelview");
 
-  texture_uniform = program.get_uniform_location("texture");
+  texture_uniform = program->get_uniform_location("texture");
   glUniform1i(texture_uniform, 0);
 
   camera.projection = glm::perspective(45.0f, (float)640 / (float)480, 0.1f, 10.0f);
   camera.position.z = 2;
 
-  protagonist = new Model("protagonist.obj");
-  suzanne = new Model("suzanne.obj");
-  teapot = new Model("teapot.obj");
-  bunny = new Model("bunny.obj");
+  protagonist = Store().load<Model>("protagonist.obj");
+  suzanne = Store().load<Model>("suzanne.obj");
+  teapot = Store().load<Model>("teapot.obj");
+  bunny = Store().load<Model>("bunny.obj");
 
   protagonist1 = new Object(*protagonist);
   protagonist1->position.z = 4;

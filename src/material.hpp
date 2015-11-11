@@ -8,7 +8,7 @@ class Material
 public:
   inline void use() const;
 
-  Texture *texture;
+  const Texture *texture;
 };
 
 void Material::use() const

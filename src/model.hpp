@@ -1,6 +1,7 @@
 #ifndef _MODEL_HPP_
 #define _MODEL_HPP_
 
+#include "store.hpp"
 #include "gl.hpp"
 #include "material.hpp"
 
@@ -9,10 +10,16 @@
 
 #include <glm/glm.hpp>
 
-class Model
+class Model:
+  public Store::Resource
 {
-public:
+  friend class Store;
+
   Model(const std::string &name);
+
+  static const std::string filename(const std::string &name);
+
+public:
   void draw() const;
 
 private:
@@ -28,7 +35,7 @@ private:
   std::vector<GLushort> elements;
   GLuint id;
 
-  Material *_material;
+  const Material *_material;
 
   static GLuint create_array_buffer(GLenum type, GLsizeiptr size, const GLvoid *data);
 };

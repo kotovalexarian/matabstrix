@@ -1,12 +1,21 @@
 #ifndef _PROGRAM_HPP_
 #define _PROGRAM_HPP_
 
+#include "store.hpp"
 #include "gl.hpp"
 
-class Program
+#include <string>
+
+class Program:
+  public Store::Resource
 {
+  friend class Store;
+
+  Program(const std::string &name);
+
+  static const std::string filename(const std::string &name);
+
 public:
-  Program(const char *name);
   void use() const;
   GLuint get_uniform_location(const GLchar *name) const;
 

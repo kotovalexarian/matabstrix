@@ -5,9 +5,14 @@
 #include <fstream>
 #include <sstream>
 
+const std::string Model::filename(const std::string &name)
+{
+  return "/data/models/" + name;
+}
+
 Model::Model(const std::string &name)
 {
-  std::ifstream file("/data/models/" + name, std::ios::in);
+  std::ifstream file(filename(name), std::ios::in);
 
   Mtllib *mtllib = nullptr;
 
@@ -76,7 +81,7 @@ Model::Model(const std::string &name)
     else
     if (line.substr(0, 7) == "mtllib ")
     {
-      mtllib = new Mtllib(line.substr(7));
+      mtllib = (Mtllib*)Store().load<Mtllib>(line.substr(7));
     }
     else
     if (line.substr(0, 7) == "usemtl ")

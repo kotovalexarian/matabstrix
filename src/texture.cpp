@@ -4,9 +4,14 @@
 
 #include <SDL_image.h>
 
+const std::string Texture::filename(const std::string &name)
+{
+  return "/data/textures/" + name;
+}
+
 Texture::Texture(const std::string &name)
 {
-  SDL_Surface *surface = IMG_Load(("/data/textures/" + name).c_str());
+  SDL_Surface *surface = IMG_Load(filename(name).c_str());
 
   glGenTextures(1, &_id);
   glBindTexture(GL_TEXTURE_2D, _id);

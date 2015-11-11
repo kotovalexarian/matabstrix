@@ -3,9 +3,14 @@
 #include <string>
 #include <fstream>
 
+const std::string Mtllib::filename(const std::string &name)
+{
+  return "/data/materials/" + name;
+}
+
 Mtllib::Mtllib(const std::string &name)
 {
-  std::ifstream file("/data/materials/" + name, std::ios::in);
+  std::ifstream file(filename(name), std::ios::in);
 
   Material *material = nullptr;
 
@@ -23,7 +28,7 @@ Mtllib::Mtllib(const std::string &name)
     else
     if (line.substr(0, 7) == "map_Kd ")
     {
-      material->texture = new Texture(line.substr(7).c_str());
+      material->texture = Store().load<Texture>(line.substr(7));
     }
   }
 }

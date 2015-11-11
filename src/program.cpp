@@ -2,12 +2,16 @@
 
 #include "shader.hpp"
 
-#include <string>
 #include <fstream>
 
-Program::Program(const char *const name)
+const std::string Program::filename(const std::string &name)
 {
-  const std::string path = std::string("/data/shaders/") + name + '/';
+  return "/data/shaders/" + name;
+}
+
+Program::Program(const std::string &name)
+{
+  const std::string path = filename(name) + '/';
 
   const Shader vertex_shader = Shader(GL_VERTEX_SHADER, (path + "vertex.glsl").c_str());
   const Shader fragment_shader = Shader(GL_FRAGMENT_SHADER, (path + "fragment.glsl").c_str());
