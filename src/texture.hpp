@@ -1,19 +1,15 @@
 #ifndef _TEXTURE_HPP_
 #define _TEXTURE_HPP_
 
-#include "store.hpp"
+#include "resource.hpp"
 #include "gl.hpp"
 
 #include <string>
 
 class Texture:
-  public Store::Resource
+  public Resource
 {
-  friend class Store;
-
-  Texture(const std::string &name);
-
-  static const std::string filename(const std::string &name);
+  RESOURCE(Texture)
 
 public:
 

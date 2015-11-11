@@ -1,7 +1,7 @@
 #ifndef _MODEL_HPP_
 #define _MODEL_HPP_
 
-#include "store.hpp"
+#include "resource.hpp"
 #include "gl.hpp"
 #include "material.hpp"
 
@@ -11,13 +11,9 @@
 #include <glm/glm.hpp>
 
 class Model:
-  public Store::Resource
+  public Resource
 {
-  friend class Store;
-
-  Model(const std::string &name);
-
-  static const std::string filename(const std::string &name);
+  RESOURCE(Model)
 
 public:
   void draw() const;

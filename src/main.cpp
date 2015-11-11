@@ -2,6 +2,7 @@
 #include "program.hpp"
 #include "scene.hpp"
 #include "camera.hpp"
+#include "store.hpp"
 
 #include <cstdlib>
 

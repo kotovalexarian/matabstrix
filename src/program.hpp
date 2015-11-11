@@ -1,19 +1,15 @@
 #ifndef _PROGRAM_HPP_
 #define _PROGRAM_HPP_
 
-#include "store.hpp"
+#include "resource.hpp"
 #include "gl.hpp"
 
 #include <string>
 
 class Program:
-  public Store::Resource
+  public Resource
 {
-  friend class Store;
-
-  Program(const std::string &name);
-
-  static const std::string filename(const std::string &name);
+  RESOURCE(Program)
 
 public:
   void use() const;

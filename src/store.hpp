@@ -5,17 +5,11 @@
 #include <string>
 #include <map>
 
+class Resource;
+
 class Store
 {
 public:
-  class Resource
-  {
-    friend class Store;
-
-    __attribute__((unused)) // Used by friend class Store
-    unsigned long _ref_count = 0;
-  };
-
   template <class T>
   const T *load(const std::string &name);
 

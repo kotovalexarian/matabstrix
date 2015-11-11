@@ -1,20 +1,16 @@
 #ifndef _MTLLIB_HPP_
 #define _MTLLIB_HPP_
 
-#include "store.hpp"
+#include "resource.hpp"
 #include "material.hpp"
 
 #include <string>
 #include <map>
 
 class Mtllib:
-  public Store::Resource
+  public Resource
 {
-  friend class Store;
-
-  Mtllib(const std::string &name);
-
-  static const std::string filename(const std::string &name);
+  RESOURCE(Mtllib)
 
 public:
   std::map<std::string, const Material*> materials;
