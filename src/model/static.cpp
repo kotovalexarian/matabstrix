@@ -109,6 +109,7 @@ void Static::draw() const
 
   glBindBuffer(GL_ARRAY_BUFFER, positions_id);
   glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, reinterpret_cast<const GLvoid*>(0));
+  glEnableVertexAttribArray(0);
 
   if (tex_coords_id == 0)
     glDisableVertexAttribArray(1);
@@ -121,6 +122,7 @@ void Static::draw() const
 
   glBindBuffer(GL_ARRAY_BUFFER, normals_id);
   glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 0, reinterpret_cast<const GLvoid*>(0));
+  glEnableVertexAttribArray(2);
 
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, id);
 

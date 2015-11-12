@@ -4,6 +4,7 @@
 #include "camera.hpp"
 #include "store.hpp"
 #include "model/static.hpp"
+#include "model/raw.hpp"
 
 #include <cstdlib>
 
@@ -39,12 +40,14 @@ static const Model *car;
 static const Model *suzanne;
 static const Model *teapot;
 static const Model *bunny;
+static const Model *untitled;
 
 static Object *protagonist1;
 static Object *car1;
 static Object *suzanne1;
 static Object *teapot1;
 static Object *bunny1;
+static Object *untitled1;
 
 static bool in_car = false;
 
@@ -87,6 +90,7 @@ int main()
   suzanne = store.load<Models::Static>("suzanne.obj");
   teapot = store.load<Models::Static>("teapot.obj");
   bunny = store.load<Models::Static>("bunny.obj");
+  untitled = store.load<Models::Raw>("untitled.raw");
 
   protagonist1 = new Object(*protagonist);
   protagonist1->position.z = 4;
@@ -106,11 +110,15 @@ int main()
   bunny1 = new Object(*bunny);
   bunny1->position.x = 2.0;
 
+  untitled1 = new Object(*untitled);
+  untitled1->position.x = -6;
+
   scene << protagonist1
         << car1
         << suzanne1
         << teapot1
-        << bunny1;
+        << bunny1
+        << untitled1;
 
   glViewport(0, 0, 640, 480);
 

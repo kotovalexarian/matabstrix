@@ -3,12 +3,7 @@
 
 #include "model.hpp"
 #include "../mesh/textured.hpp"
-#include "../gl.hpp"
 #include "../material.hpp"
-
-#include <string>
-
-#include <glm/glm.hpp>
 
 namespace Models
 {
