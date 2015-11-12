@@ -39,11 +39,11 @@ void Raw::draw() const
   glBindBuffer(GL_ARRAY_BUFFER, positions_id);
   glVertexAttribPointer(INDEX_POSITION, 3, GL_FLOAT, GL_FALSE, 0, reinterpret_cast<const GLvoid*>(0));
 
-  glDisableVertexAttribArray(INDEX_TEX_COORD);
-
   glEnableVertexAttribArray(INDEX_NORMAL);
   glBindBuffer(GL_ARRAY_BUFFER, normals_id);
   glVertexAttribPointer(INDEX_NORMAL, 3, GL_FLOAT, GL_FALSE, 0, reinterpret_cast<const GLvoid*>(0));
+
+  glDisableVertexAttribArray(INDEX_TEX_COORD);
 
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, id);
   glDrawElements(GL_TRIANGLES, elements.size(), GL_UNSIGNED_SHORT, 0);

@@ -1,6 +1,6 @@
 attribute vec4 position;
-attribute vec2 tex_coord;
 attribute vec3 normal;
+attribute vec2 tex_coord;
 
 varying vec2 f_tex_coord;
 varying float light_weight;

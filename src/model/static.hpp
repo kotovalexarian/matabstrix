@@ -18,8 +18,8 @@ namespace Models
 
   private:
     GLuint positions_id;
-    GLuint tex_coords_id;
     GLuint normals_id;
+    GLuint tex_coords_id;
 
     GLuint id;
 

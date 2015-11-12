@@ -93,12 +93,12 @@ Static::Static(Store &store, const std::string &name)
 
   positions_id = create_array_buffer(GL_ARRAY_BUFFER, 3 * positions.size() * sizeof(GLfloat), positions.data());
 
+  normals_id = create_array_buffer(GL_ARRAY_BUFFER, 3 * normals.size() * sizeof(GLfloat), normals.data());
+
   if (attr_count == 3)
     tex_coords_id = create_array_buffer(GL_ARRAY_BUFFER, 2 * tex_coords.size() * sizeof(GLfloat), tex_coords.data());
   else
     tex_coords_id = 0;
-
-  normals_id = create_array_buffer(GL_ARRAY_BUFFER, 3 * normals.size() * sizeof(GLfloat), normals.data());
 
   id = create_array_buffer(GL_ELEMENT_ARRAY_BUFFER, elements.size() * sizeof(GLushort), elements.data());
 }
@@ -111,6 +111,10 @@ void Static::draw() const
   glBindBuffer(GL_ARRAY_BUFFER, positions_id);
   glVertexAttribPointer(INDEX_POSITION, 3, GL_FLOAT, GL_FALSE, 0, reinterpret_cast<const GLvoid*>(0));
 
+  glEnableVertexAttribArray(INDEX_NORMAL);
+  glBindBuffer(GL_ARRAY_BUFFER, normals_id);
+  glVertexAttribPointer(INDEX_NORMAL, 3, GL_FLOAT, GL_FALSE, 0, reinterpret_cast<const GLvoid*>(0));
+
   if (tex_coords_id == 0)
     glDisableVertexAttribArray(INDEX_TEX_COORD);
   else
@@ -119,10 +123,6 @@ void Static::draw() const
     glBindBuffer(GL_ARRAY_BUFFER, tex_coords_id);
     glVertexAttribPointer(INDEX_TEX_COORD, 2, GL_FLOAT, GL_FALSE, 0, reinterpret_cast<const GLvoid*>(0));
   }
-
-  glEnableVertexAttribArray(INDEX_NORMAL);
-  glBindBuffer(GL_ARRAY_BUFFER, normals_id);
-  glVertexAttribPointer(INDEX_NORMAL, 3, GL_FLOAT, GL_FALSE, 0, reinterpret_cast<const GLvoid*>(0));
 
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, id);
 
