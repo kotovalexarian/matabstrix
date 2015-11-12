@@ -2,6 +2,7 @@
 
 #include "mtllib.hpp"
 
+#include <vector>
 #include <fstream>
 #include <sstream>
 
