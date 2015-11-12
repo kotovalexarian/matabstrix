@@ -5,6 +5,9 @@
 
 void Object::draw(const glm::mat4 &mvp) const
 {
+  if (!visible)
+    return;
+
   const glm::mat4 transform = mvp * transformation();
   glUniformMatrix4fv(mvp_uniform, 1, GL_FALSE, glm::value_ptr(transform));
 

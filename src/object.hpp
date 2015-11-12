@@ -13,6 +13,8 @@ public:
   Object(const Model &model) : _model(model) {};
   void draw(const glm::mat4 &mvp) const;
 
+  bool visible = true;
+
 private:
   const Model &_model;
 };

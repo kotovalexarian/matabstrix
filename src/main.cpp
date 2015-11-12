@@ -29,6 +29,8 @@ static bool keys[GLFW_KEY_LAST];
 static Scene scene;
 
 static Camera camera(scene);
+
+static float camera_angles_y = 0;
 static float camera_angles_x = 0;
 
 static const Model *protagonist;
@@ -42,6 +44,10 @@ static Object *car1;
 static Object *suzanne1;
 static Object *teapot1;
 static Object *bunny1;
+
+static bool in_car = false;
+
+static float car_vel = 0.0;
 
 int main()
 {
@@ -74,7 +80,6 @@ int main()
   glUniform1i(texture_uniform, 0);
 
   camera.projection = glm::perspective(45.0f, (float)640 / (float)480, 0.1f, 100.0f);
-  camera.position.z = 2;
 
   protagonist = store.load<Model>("protagonist.obj");
   car = store.load<Model>("car.obj");
@@ -117,33 +122,82 @@ int main()
 
 void iterate()
 {
-  if (keys[(unsigned char)'W'])
+  if (in_car)
   {
-    protagonist1->position.x -= 0.1 * sin(glm::radians(protagonist1->angles.y));
-    protagonist1->position.z -= 0.1 * cos(glm::radians(protagonist1->angles.y));
+    protagonist1->position = car1->position;
+
+    if (keys[(unsigned char)'W'])
+      car_vel += 0.1;
+
+    if (keys[(unsigned char)'S'])
+      car_vel -= 0.1;
+
+    if (car_vel > 2.0)
+      car_vel = 2.0;
+    else
+    if (car_vel < -1.0)
+      car_vel = -1.0;
+
+    if (keys[(unsigned char)'A'])
+      car1->angles.y += 0.5 * car_vel;
+
+    if (keys[(unsigned char)'D'])
+      car1->angles.y -= 0.5 * car_vel;
+
+    if (car1->angles.y < 0)
+      car1->angles.y = 359;
+    if (car1->angles.y >= 360)
+      car1->angles.y = 0;
+  }
+  else
+  {
+    car_vel *= 0.99;
+
+    protagonist1->angles.y = camera_angles_y;
+
+    if (keys[(unsigned char)'W'])
+    {
+      protagonist1->position.x -= 0.1 * sin(glm::radians(protagonist1->angles.y));
+      protagonist1->position.z -= 0.1 * cos(glm::radians(protagonist1->angles.y));
+    }
+
+    if (keys[(unsigned char)'S'])
+    {
+      protagonist1->position.x += 0.1 * sin(glm::radians(protagonist1->angles.y));
+      protagonist1->position.z += 0.1 * cos(glm::radians(protagonist1->angles.y));
+    }
+
+    if (keys[(unsigned char)'D'])
+    {
+      protagonist1->position.x += 0.1 * cos(glm::radians(protagonist1->angles.y));
+      protagonist1->position.z -= 0.1 * sin(glm::radians(protagonist1->angles.y));
+    }
+
+    if (keys[(unsigned char)'A'])
+    {
+      protagonist1->position.x -= 0.1 * cos(glm::radians(protagonist1->angles.y));
+      protagonist1->position.z += 0.1 * sin(glm::radians(protagonist1->angles.y));
+    }
   }
 
-  if (keys[(unsigned char)'S'])
-  {
-    protagonist1->position.x += 0.1 * sin(glm::radians(protagonist1->angles.y));
-    protagonist1->position.z += 0.1 * cos(glm::radians(protagonist1->angles.y));
-  }
+  car1->position.x += car_vel * 0.1 * sin(glm::radians(car1->angles.y));
+  car1->position.z += car_vel * 0.1 * cos(glm::radians(car1->angles.y));
 
-  if (keys[(unsigned char)'D'])
+  if (in_car)
   {
-    protagonist1->position.x += 0.1 * cos(glm::radians(protagonist1->angles.y));
-    protagonist1->position.z -= 0.1 * sin(glm::radians(protagonist1->angles.y));
+    camera.base = car1->transformation()
+      * glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 1.0f, 0.0f))
+      * glm::rotate(glm::mat4(1.0f), glm::radians(camera_angles_y), glm::vec3(0.0f, 1.0f, 0.0f))
+      * glm::rotate(glm::mat4(1.0f), glm::radians(camera_angles_x), glm::vec3(1.0f, 0.0f, 0.0f));
+    camera.position.z = 8;
   }
-
-  if (keys[(unsigned char)'A'])
+  else
   {
-    protagonist1->position.x -= 0.1 * cos(glm::radians(protagonist1->angles.y));
-    protagonist1->position.z += 0.1 * sin(glm::radians(protagonist1->angles.y));
+    camera.base = protagonist1->transformation()
+      * glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 2.0f, 0.0f))
+      * glm::rotate(glm::mat4(1.0f), glm::radians(camera_angles_x), glm::vec3(1.0f, 0.0f, 0.0f));
+    camera.position.z = 2;
   }
-
-  camera.base = protagonist1->transformation()
-    * glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 2.0f, 0.0f))
-    * glm::rotate(glm::mat4(1.0f), glm::radians(camera_angles_x), glm::vec3(1.0f, 0.0f, 0.0f));
 
   suzanne1->angles.z = glfwGetTime() * 360 / 4;
   teapot1->angles.x = glfwGetTime() * 360 / 6;
@@ -157,20 +211,35 @@ void iterate()
 GLFWCALL void on_key(int key, int action)
 {
   keys[key] = action != GLFW_RELEASE;
+
+  if (key == 'E' && action == GLFW_PRESS)
+  {
+    if (in_car)
+    {
+      in_car = false;
+      protagonist1->visible = true;
+    }
+    else
+    if (glm::distance(protagonist1->position, car1->position) <= 1.0)
+    {
+      in_car = true;
+      protagonist1->visible = false;
+    }
+  }
 }
 
 EM_BOOL on_em_mousemove(__attribute__((unused)) int event_type,
                         const EmscriptenMouseEvent *mouse_event,
                         __attribute__((unused)) void *user_data)
 {
-  protagonist1->angles.y -= mouse_event->movementX;
+  camera_angles_y -= mouse_event->movementX;
   camera_angles_x -= mouse_event->movementY;
 
-  if (protagonist1->angles.y < 0)
-    protagonist1->angles.y = 359;
+  if (camera_angles_y < 0)
+    camera_angles_y = 359;
   else
-  if (protagonist1->angles.y >= 360)
-    protagonist1->angles.y = 0;
+  if (camera_angles_y >= 360)
+    camera_angles_y = 0;
 
   if (camera_angles_x < -90)
     camera_angles_x = -90;
