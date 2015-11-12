@@ -2,7 +2,7 @@
 #define _OBJECT_HPP_
 
 #include "transformation.hpp"
-#include "model.hpp"
+#include "model/model.hpp"
 
 #include <glm/glm.hpp>
 

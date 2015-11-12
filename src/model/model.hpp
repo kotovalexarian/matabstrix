@@ -1,10 +1,10 @@
 #ifndef _MODEL_HPP_
 #define _MODEL_HPP_
 
-#include "resource.hpp"
-#include "textured_mesh.hpp"
-#include "gl.hpp"
-#include "material.hpp"
+#include "../resource.hpp"
+#include "../textured_mesh.hpp"
+#include "../gl.hpp"
+#include "../material.hpp"
 
 #include <string>
 

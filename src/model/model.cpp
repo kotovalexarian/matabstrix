@@ -1,6 +1,6 @@
 #include "model.hpp"
 
-#include "mtllib.hpp"
+#include "../mtllib.hpp"
 
 #include <vector>
 #include <fstream>
