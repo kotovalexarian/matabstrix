@@ -13,7 +13,7 @@ class Resource
 
 #define RESOURCE(T) \
 private: \
-  friend class Store; \
+  friend class ::Store; \
   T(Store &store, const std::string &name); \
   static const std::string filename(const std::string &name);
 

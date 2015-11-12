@@ -3,6 +3,7 @@
 #include "scene.hpp"
 #include "camera.hpp"
 #include "store.hpp"
+#include "model/static.hpp"
 
 #include <cstdlib>
 
@@ -81,11 +82,11 @@ int main()
 
   camera.projection = glm::perspective(45.0f, (float)640 / (float)480, 0.1f, 100.0f);
 
-  protagonist = store.load<Model>("protagonist.obj");
-  car = store.load<Model>("car.obj");
-  suzanne = store.load<Model>("suzanne.obj");
-  teapot = store.load<Model>("teapot.obj");
-  bunny = store.load<Model>("bunny.obj");
+  protagonist = store.load<Models::Static>("protagonist.obj");
+  car = store.load<Models::Static>("car.obj");
+  suzanne = store.load<Models::Static>("suzanne.obj");
+  teapot = store.load<Models::Static>("teapot.obj");
+  bunny = store.load<Models::Static>("bunny.obj");
 
   protagonist1 = new Object(*protagonist);
   protagonist1->position.z = 4;
