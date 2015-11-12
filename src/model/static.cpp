@@ -23,8 +23,6 @@ Static::Static(Store &store, const std::string &name)
   std::vector<glm::vec2> tmp_tex_coords;
   std::vector<glm::vec3> tmp_normals;
 
-  size_t index = 0;
-
   int attr_count = 0;
 
   std::string line;
@@ -73,13 +71,13 @@ Static::Static(Store &store, const std::string &name)
                                                                      &v[2], &vt[2], &vn[2]);
 
       for (int i = 0; i < 3; ++i)
-      {
-        positions.push_back(tmp_positions[v[i] - 1]);
         if (attr_count == 3)
-          tex_coords.push_back(tmp_tex_coords[vt[i] - 1]);
-        normals.push_back(tmp_normals[vn[i] - 1]);
-        elements.push_back(index++);
-      }
+          add(tmp_positions[v[i] - 1],
+              tmp_normals[vn[i] - 1],
+              tmp_tex_coords[vt[i] - 1]);
+        else
+          Mesh::add(tmp_positions[v[i] - 1],
+                    tmp_normals[vn[i] - 1]);
     }
     else
     if (line.substr(0, 7) == "mtllib ")

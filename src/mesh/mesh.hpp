@@ -14,6 +14,8 @@ public:
   std::vector<glm::vec3> normals;
 
   std::vector<GLushort> elements;
+
+  void add(const glm::vec3 &position, const glm::vec3 &normal);
 };
 
 #endif // _MESH_HPP_
