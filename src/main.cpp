@@ -32,11 +32,13 @@ static Camera camera(scene);
 static float camera_angles_x = 0;
 
 static const Model *protagonist;
+static const Model *car;
 static const Model *suzanne;
 static const Model *teapot;
 static const Model *bunny;
 
 static Object *protagonist1;
+static Object *car1;
 static Object *suzanne1;
 static Object *teapot1;
 static Object *bunny1;
@@ -71,16 +73,20 @@ int main()
   texture_uniform = program->get_uniform_location("texture");
   glUniform1i(texture_uniform, 0);
 
-  camera.projection = glm::perspective(45.0f, (float)640 / (float)480, 0.1f, 10.0f);
+  camera.projection = glm::perspective(45.0f, (float)640 / (float)480, 0.1f, 100.0f);
   camera.position.z = 2;
 
   protagonist = store.load<Model>("protagonist.obj");
+  car = store.load<Model>("car.obj");
   suzanne = store.load<Model>("suzanne.obj");
   teapot = store.load<Model>("teapot.obj");
   bunny = store.load<Model>("bunny.obj");
 
   protagonist1 = new Object(*protagonist);
   protagonist1->position.z = 4;
+
+  car1 = new Object(*car);
+  car1->position.z = -10;
 
   suzanne1 = new Object(*suzanne);
   suzanne1->position.z = -2;
@@ -95,6 +101,7 @@ int main()
   bunny1->position.x = 2.0;
 
   scene << protagonist1
+        << car1
         << suzanne1
         << teapot1
         << bunny1;
