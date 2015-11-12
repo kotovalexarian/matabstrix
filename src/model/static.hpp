@@ -2,7 +2,7 @@
 #define _MODEL_STATIC_HPP_
 
 #include "model.hpp"
-#include "../textured_mesh.hpp"
+#include "../mesh/textured.hpp"
 #include "../gl.hpp"
 #include "../material.hpp"
 
