@@ -107,22 +107,22 @@ void Static::draw() const
 {
   _material->use();
 
-  glEnableVertexAttribArray(0);
+  glEnableVertexAttribArray(INDEX_POSITION);
   glBindBuffer(GL_ARRAY_BUFFER, positions_id);
-  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, reinterpret_cast<const GLvoid*>(0));
+  glVertexAttribPointer(INDEX_POSITION, 3, GL_FLOAT, GL_FALSE, 0, reinterpret_cast<const GLvoid*>(0));
 
   if (tex_coords_id == 0)
-    glDisableVertexAttribArray(1);
+    glDisableVertexAttribArray(INDEX_TEX_COORD);
   else
   {
-    glEnableVertexAttribArray(1);
+    glEnableVertexAttribArray(INDEX_TEX_COORD);
     glBindBuffer(GL_ARRAY_BUFFER, tex_coords_id);
-    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, reinterpret_cast<const GLvoid*>(0));
+    glVertexAttribPointer(INDEX_TEX_COORD, 2, GL_FLOAT, GL_FALSE, 0, reinterpret_cast<const GLvoid*>(0));
   }
 
-  glEnableVertexAttribArray(2);
+  glEnableVertexAttribArray(INDEX_NORMAL);
   glBindBuffer(GL_ARRAY_BUFFER, normals_id);
-  glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 0, reinterpret_cast<const GLvoid*>(0));
+  glVertexAttribPointer(INDEX_NORMAL, 3, GL_FLOAT, GL_FALSE, 0, reinterpret_cast<const GLvoid*>(0));
 
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, id);
 
