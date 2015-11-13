@@ -1,7 +1,3 @@
-#include "main.hpp"
-
-#include "gl.hpp"
-#include "program.hpp"
 #include "scene.hpp"
 #include "camera.hpp"
 #include "store.hpp"
@@ -15,8 +11,6 @@
 
 #include <emscripten/emscripten.h>
 #include <emscripten/html5.h>
-
-const Executable *exe;
 
 static Store store;
 
@@ -72,13 +66,6 @@ int main()
 
   glfwSetKeyCallback(on_key);
   emscripten_set_mousemove_callback(nullptr, nullptr, false, on_em_mousemove);
-
-  exe = store.load<Program>("textured")->build(
-    __attrib_count, attribs,
-    __uniform_count, uniforms
-  );
-
-  exe->use();
 
   camera.projection = glm::perspective(45.0f, (float)640 / (float)480, 0.1f, 100.0f);
 

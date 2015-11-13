@@ -1,8 +1,7 @@
 #include "static.hpp"
 
-#include "../main.hpp"
-
 #include "../mtllib.hpp"
+#include "../program.hpp"
 
 #include <vector>
 #include <fstream>
@@ -20,6 +19,11 @@ const std::string Static::filename(const std::string &name)
 
 Static::Static(Store &store, const std::string &name)
 {
+  exe = store.load<Program>("textured")->build(
+    __attrib_count, attribs,
+    __uniform_count, uniforms
+  );
+
   std::ifstream file(filename(name), std::ios::in);
 
   const Mtllib *mtllib = nullptr;
@@ -110,6 +114,8 @@ Static::Static(Store &store, const std::string &name)
 
 void Static::draw(const glm::mat4 &mvp, const glm::mat4 &transformation) const
 {
+  exe->use();
+
   const glm::mat4 transform = mvp * transformation;
   glUniformMatrix4fv(exe->uniform(Uniform::mvp), 1, GL_FALSE, glm::value_ptr(transform));
 

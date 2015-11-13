@@ -1,6 +1,6 @@
 #include "raw.hpp"
 
-#include "../main.hpp"
+#include "../program.hpp"
 
 #include <cstdio>
 
@@ -16,6 +16,11 @@ const std::string Raw::filename(const std::string &name)
 
 Raw::Raw(__attribute__((unused)) Store &store, const std::string &name)
 {
+  exe = store.load<Program>("textured")->build(
+    __attrib_count, attribs,
+    __uniform_count, uniforms
+  );
+
   FILE *file = fopen(filename(name).c_str(), "r");
 
   while (!feof(file))
@@ -40,6 +45,8 @@ Raw::Raw(__attribute__((unused)) Store &store, const std::string &name)
 
 void Raw::draw(const glm::mat4 &mvp, const glm::mat4 &transformation) const
 {
+  exe->use();
+
   const glm::mat4 transform = mvp * transformation;
   glUniformMatrix4fv(exe->uniform(Uniform::mvp), 1, GL_FALSE, glm::value_ptr(transform));
 

@@ -4,6 +4,7 @@
 #include "model.hpp"
 #include "../mesh/textured.hpp"
 #include "../material.hpp"
+#include "../executable.hpp"
 
 namespace Models
 {
@@ -24,6 +25,8 @@ namespace Models
     GLuint id;
 
     const Material *_material;
+
+    const Executable *exe;
   };
 };
 

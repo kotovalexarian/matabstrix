@@ -3,6 +3,7 @@
 
 #include "model.hpp"
 #include "../mesh/mesh.hpp"
+#include "../executable.hpp"
 
 namespace Models
 {
@@ -20,6 +21,8 @@ namespace Models
     GLuint normals_id;
 
     GLuint id;
+
+    const Executable *exe;
   };
 };
 
