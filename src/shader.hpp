@@ -3,9 +3,11 @@
 
 #include "gl.hpp"
 
+#include <string>
+
 struct Shader
 {
-  Shader(GLenum type, const char *filename);
+  Shader(GLenum type, const std::string &filename);
   inline GLuint id() const { return _id; };
 
 private:

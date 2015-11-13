@@ -1,7 +1,7 @@
 #ifndef _PROGRAM_HPP_
 #define _PROGRAM_HPP_
 
-#include "gl.hpp"
+#include "executable.hpp"
 
 #include <string>
 
@@ -9,18 +9,13 @@ struct Program
 {
   Program(const std::string &name);
 
-  const Program *build(GLuint count, const GLchar *const names[]);
-
-  void use() const;
-  GLuint get_uniform_location(const GLchar *name) const;
+  const Executable *build(GLuint count, const GLchar *const names[]);
 
 private:
   static const std::string filename(const std::string &name);
 
-  void bind_attrib_location(GLuint index, const GLchar *name);
-  void link();
-
-  GLuint _id;
+  const Shader vertex_shader;
+  const Shader fragment_shader;
 };
 
 #endif // _PROGRAM_HPP_

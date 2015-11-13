@@ -3,9 +3,9 @@
 #include <cstdlib>
 #include <cstdio>
 
-Shader::Shader(const GLenum type, const char *const filename)
+Shader::Shader(const GLenum type, const std::string &filename)
 {
-  FILE *file = fopen(filename, "r");
+  FILE *file = fopen(filename.c_str(), "r");
 
   fseek(file, 0, SEEK_END);
   const long size = ftell(file);

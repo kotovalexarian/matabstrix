@@ -72,12 +72,12 @@ int main()
   glfwSetKeyCallback(on_key);
   emscripten_set_mousemove_callback(nullptr, nullptr, false, on_em_mousemove);
 
-  const Program *program = Program("textured").build(__count, attribs);
+  const Executable *exe = Program("textured").build(__count, attribs);
 
-  program->use();
+  mvp_uniform = exe->get_uniform_location("mvp");
+  local_modelview_uniform = exe->get_uniform_location("local_modelview");
 
-  mvp_uniform = program->get_uniform_location("mvp");
-  local_modelview_uniform = program->get_uniform_location("local_modelview");
+  exe->use();
 
   camera.projection = glm::perspective(45.0f, (float)640 / (float)480, 0.1f, 100.0f);
 
