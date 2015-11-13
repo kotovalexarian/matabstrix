@@ -27,10 +27,14 @@ void Program::bind_attrib_location(GLuint index, const GLchar *name)
   glBindAttribLocation(_id, index, name);
 }
 
-void Program::bind_attribs(GLuint count, const GLchar *const names[])
+const Program *Program::build(GLuint count, const GLchar *const names[])
 {
   for (GLuint index = 0; index < count; ++index)
     bind_attrib_location(index, names[index]);
+
+  link();
+
+  return this;
 }
 
 void Program::link()

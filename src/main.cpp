@@ -72,9 +72,7 @@ int main()
   glfwSetKeyCallback(on_key);
   emscripten_set_mousemove_callback(nullptr, nullptr, false, on_em_mousemove);
 
-  Program *program = new Program("textured");
-  program->bind_attribs(__count, attribs);
-  program->link();
+  const Program *program = Program("textured").build(__count, attribs);
 
   program->use();
 
