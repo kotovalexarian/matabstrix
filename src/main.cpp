@@ -72,7 +72,7 @@ int main()
   glfwSetKeyCallback(on_key);
   emscripten_set_mousemove_callback(nullptr, nullptr, false, on_em_mousemove);
 
-  const Program *program = store.load<Program>("textured");
+  const Program *program = new Program("textured");
   program->use();
 
   mvp_uniform = program->get_uniform_location("mvp");

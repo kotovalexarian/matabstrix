@@ -1,20 +1,20 @@
 #ifndef _PROGRAM_HPP_
 #define _PROGRAM_HPP_
 
-#include "resource.hpp"
 #include "gl.hpp"
 
 #include <string>
 
-struct Program:
-  Resource
+struct Program
 {
-  RESOURCE(Program)
+  Program(const std::string &name);
 
   void use() const;
   GLuint get_uniform_location(const GLchar *name) const;
 
 private:
+  static const std::string filename(const std::string &name);
+
   GLuint _id;
 };
 
