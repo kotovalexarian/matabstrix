@@ -12,6 +12,17 @@
 
 using namespace Models;
 
+const GLchar *const Static::attribs[] = {
+  "position",
+  "normal",
+  "tex_coord",
+};
+
+const GLchar *const Static::uniforms[] = {
+  "mvp",
+  "local_modelview",
+};
+
 const std::string Static::filename(const std::string &name)
 {
   return "/data/models/" + name;

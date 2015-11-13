@@ -23,6 +23,26 @@ namespace Models
     GLuint id;
 
     const Executable *exe;
+
+    enum Attrib : GLuint
+    {
+      position,
+      normal,
+      tex_coord,
+
+      __attrib_count
+    };
+
+    enum Uniform : unsigned
+    {
+      mvp,
+      local_modelview,
+
+      __uniform_count
+    };
+
+    static const GLchar *const attribs[];
+    static const GLchar *const uniforms[];
   };
 };
 

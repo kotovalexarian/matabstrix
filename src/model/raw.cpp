@@ -9,6 +9,17 @@
 
 using namespace Models;
 
+const GLchar *const Raw::attribs[] = {
+  "position",
+  "normal",
+  "tex_coord",
+};
+
+const GLchar *const Raw::uniforms[] = {
+  "mvp",
+  "local_modelview",
+};
+
 const std::string Raw::filename(const std::string &name)
 {
   return "/data/models/" + name;
