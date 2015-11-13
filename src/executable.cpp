@@ -25,7 +25,10 @@ void Executable::use() const
   glUseProgram(id);
 }
 
-GLuint Executable::get_uniform_location(const GLchar *name) const
+void Executable::get_uniforms(unsigned count, const GLchar *const names[])
 {
-  return glGetUniformLocation(id, name);
+  uniforms.resize(count);
+
+  for (unsigned index = 0; index < count; ++index)
+    uniforms[index] = glGetUniformLocation(id, names[index]);
 }

@@ -10,7 +10,7 @@ enum Attrib : GLuint
   normal,
   tex_coord,
 
-  __count
+  __attrib_count
 };
 
 static const GLchar *const attribs[] = {
@@ -19,7 +19,17 @@ static const GLchar *const attribs[] = {
   "tex_coord",
 };
 
-extern GLuint mvp_uniform;
-extern GLuint local_modelview_uniform;
+enum Uniform : unsigned
+{
+  mvp,
+  local_modelview,
+
+  __uniform_count
+};
+
+static const GLchar *const uniforms[] = {
+  "mvp",
+  "local_modelview",
+};
 
 #endif // _GL_HPP_

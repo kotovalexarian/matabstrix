@@ -1,5 +1,7 @@
 #include "raw.hpp"
 
+#include "../main.hpp"
+
 #include <cstdio>
 
 #include <glm/gtc/type_ptr.hpp>
@@ -39,10 +41,10 @@ Raw::Raw(__attribute__((unused)) Store &store, const std::string &name)
 void Raw::draw(const glm::mat4 &mvp, const glm::mat4 &transformation) const
 {
   const glm::mat4 transform = mvp * transformation;
-  glUniformMatrix4fv(mvp_uniform, 1, GL_FALSE, glm::value_ptr(transform));
+  glUniformMatrix4fv(exe->uniform(Uniform::mvp), 1, GL_FALSE, glm::value_ptr(transform));
 
   const glm::mat3 local_modelview = glm::transpose(glm::inverse(glm::mat3(transformation)));
-  glUniformMatrix3fv(local_modelview_uniform, 1, GL_FALSE, glm::value_ptr(local_modelview));
+  glUniformMatrix3fv(exe->uniform(Uniform::local_modelview), 1, GL_FALSE, glm::value_ptr(local_modelview));
 
   glEnableVertexAttribArray(position);
   glBindBuffer(GL_ARRAY_BUFFER, positions_id);

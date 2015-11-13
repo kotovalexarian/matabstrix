@@ -1,3 +1,5 @@
+#include "main.hpp"
+
 #include "gl.hpp"
 #include "program.hpp"
 #include "scene.hpp"
@@ -14,15 +16,14 @@
 #include <emscripten/emscripten.h>
 #include <emscripten/html5.h>
 
+const Executable *exe;
+
 static Store store;
 
 static void iterate();
 
 static GLFWCALL void on_key(int key, int action);
 static EM_BOOL on_em_mousemove(int event_type, const EmscriptenMouseEvent *mouse_event, void *user_data);
-
-GLuint mvp_uniform;
-GLuint local_modelview_uniform;
 
 static bool keys[GLFW_KEY_LAST];
 
@@ -72,10 +73,10 @@ int main()
   glfwSetKeyCallback(on_key);
   emscripten_set_mousemove_callback(nullptr, nullptr, false, on_em_mousemove);
 
-  const Executable *exe = Program("textured").build(__count, attribs);
-
-  mvp_uniform = exe->get_uniform_location("mvp");
-  local_modelview_uniform = exe->get_uniform_location("local_modelview");
+  exe = Program("textured").build(
+    __attrib_count, attribs,
+    __uniform_count, uniforms
+  );
 
   exe->use();
 

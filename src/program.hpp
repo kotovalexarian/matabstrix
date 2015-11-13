@@ -9,7 +9,9 @@ struct Program
 {
   Program(const std::string &name);
 
-  const Executable *build(GLuint count, const GLchar *const names[]);
+  const Executable *build(
+    GLuint attrib_count, const GLchar *const attribs[],
+    unsigned uniform_count, const GLchar *const uniforms[]);
 
 private:
   static const std::string filename(const std::string &name);

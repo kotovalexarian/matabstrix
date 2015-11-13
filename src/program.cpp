@@ -14,17 +14,21 @@ Program::Program(const std::string &name):
   fragment_shader(GL_FRAGMENT_SHADER, filename(name) + "/fragment.glsl")
 {}
 
-const Executable *Program::build(GLuint count, const GLchar *const names[])
+const Executable *Program::build(
+  GLuint attrib_count, const GLchar *const attribs[],
+  unsigned uniform_count, const GLchar *const uniforms[])
 {
   Executable *exe = new Executable();
 
   exe->attach_shader(vertex_shader);
   exe->attach_shader(fragment_shader);
 
-  for (GLuint index = 0; index < count; ++index)
-    exe->bind_attrib_location(index, names[index]);
+  for (GLuint attrib = 0; attrib < attrib_count; ++attrib)
+    exe->bind_attrib_location(attrib, attribs[attrib]);
 
   exe->link();
+
+  exe->get_uniforms(uniform_count, uniforms);
 
   return exe;
 }
