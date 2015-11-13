@@ -1,13 +1,14 @@
 #ifndef _PROGRAM_HPP_
 #define _PROGRAM_HPP_
 
+#include "shader.hpp"
 #include "executable.hpp"
 
 #include <string>
 
 struct Program
 {
-  Program(const std::string &name);
+  Program(Store &store, const std::string &name);
 
   const Executable *build(
     GLuint attrib_count, const GLchar *const attribs[],
@@ -16,8 +17,8 @@ struct Program
 private:
   static const std::string filename(const std::string &name);
 
-  const Shader vertex_shader;
-  const Shader fragment_shader;
+  const Shader *vertex_shader;
+  const Shader *fragment_shader;
 };
 
 #endif // _PROGRAM_HPP_

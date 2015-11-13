@@ -2,17 +2,18 @@
 #define _SHADER_HPP_
 
 #include "gl.hpp"
+#include "resource.hpp"
 
 #include <string>
 
-struct Shader
+struct Shader:
+  Resource
 {
-  Shader(const std::string &filename);
+  RESOURCE(Shader)
+
   inline GLuint id() const { return _id; };
 
 private:
-  static const std::string filename(const std::string &name);
-
   GLuint _id;
 };
 

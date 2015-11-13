@@ -9,9 +9,9 @@ const std::string Program::filename(const std::string &name)
   return "/data/shaders/" + name;
 }
 
-Program::Program(const std::string &name):
-  vertex_shader(name + ".vert"),
-  fragment_shader(name + ".frag")
+Program::Program(Store &store, const std::string &name):
+  vertex_shader(store.load<Shader>(name + ".vert")),
+  fragment_shader(store.load<Shader>(name + ".frag"))
 {}
 
 const Executable *Program::build(
@@ -20,8 +20,8 @@ const Executable *Program::build(
 {
   Executable *exe = new Executable();
 
-  exe->attach_shader(vertex_shader);
-  exe->attach_shader(fragment_shader);
+  exe->attach_shader(*vertex_shader);
+  exe->attach_shader(*fragment_shader);
 
   for (GLuint attrib = 0; attrib < attrib_count; ++attrib)
     exe->bind_attrib_location(attrib, attribs[attrib]);

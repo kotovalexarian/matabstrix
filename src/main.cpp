@@ -73,7 +73,7 @@ int main()
   glfwSetKeyCallback(on_key);
   emscripten_set_mousemove_callback(nullptr, nullptr, false, on_em_mousemove);
 
-  exe = Program("textured").build(
+  exe = Program(store, "textured").build(
     __attrib_count, attribs,
     __uniform_count, uniforms
   );
