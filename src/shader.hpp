@@ -7,10 +7,12 @@
 
 struct Shader
 {
-  Shader(GLenum type, const std::string &filename);
+  Shader(const std::string &filename);
   inline GLuint id() const { return _id; };
 
 private:
+  static const std::string filename(const std::string &name);
+
   GLuint _id;
 };
 

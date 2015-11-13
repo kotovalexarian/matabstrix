@@ -3,9 +3,16 @@
 #include <cstdlib>
 #include <cstdio>
 
-Shader::Shader(const GLenum type, const std::string &filename)
+const std::string Shader::filename(const std::string &name)
 {
-  FILE *file = fopen(filename.c_str(), "r");
+  return "/data/shaders/" + name;
+}
+
+Shader::Shader(const std::string &name)
+{
+  const GLuint type = name.substr(name.size() - 5) == ".vert" ? GL_VERTEX_SHADER : GL_FRAGMENT_SHADER;
+
+  FILE *file = fopen(filename(name).c_str(), "r");
 
   fseek(file, 0, SEEK_END);
   const long size = ftell(file);

@@ -10,8 +10,8 @@ const std::string Program::filename(const std::string &name)
 }
 
 Program::Program(const std::string &name):
-  vertex_shader(GL_VERTEX_SHADER, filename(name) + "/vertex.glsl"),
-  fragment_shader(GL_FRAGMENT_SHADER, filename(name) + "/fragment.glsl")
+  vertex_shader(name + ".vert"),
+  fragment_shader(name + ".frag")
 {}
 
 const Executable *Program::build(
