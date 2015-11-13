@@ -10,7 +10,7 @@ class Model:
   public Resource
 {
 public:
-  virtual void draw() const = 0;
+  virtual void draw(const glm::mat4 &mvp, const glm::mat4 &transformation) const = 0;
 
 protected:
   static GLuint create_array_buffer(GLenum type, GLsizeiptr size, const GLvoid *data);

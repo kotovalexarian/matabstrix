@@ -13,7 +13,7 @@ namespace Models
     RESOURCE(Raw)
 
   public:
-    void draw() const;
+    void draw(const glm::mat4 &mvp, const glm::mat4 &transformation) const;
 
   private:
     GLuint positions_id;
