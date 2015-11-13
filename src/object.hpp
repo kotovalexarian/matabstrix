@@ -6,10 +6,9 @@
 
 #include <glm/glm.hpp>
 
-class Object :
-  public Transformation
+struct Object :
+  Transformation
 {
-public:
   Object(const Model &model) : _model(model) {};
   void draw(const glm::mat4 &mvp) const;
 

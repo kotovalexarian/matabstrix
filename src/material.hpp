@@ -3,9 +3,8 @@
 
 #include "texture.hpp"
 
-class Material
+struct Material
 {
-public:
   inline void use() const;
 
   const Texture *texture;

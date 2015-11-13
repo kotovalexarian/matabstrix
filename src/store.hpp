@@ -5,11 +5,10 @@
 #include <string>
 #include <map>
 
-class Resource;
+struct Resource;
 
-class Store
+struct Store
 {
-public:
   template <class T>
   const T *load(const std::string &name);
 

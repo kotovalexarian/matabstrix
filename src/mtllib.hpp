@@ -7,12 +7,11 @@
 #include <string>
 #include <map>
 
-class Mtllib:
-  public Resource
+struct Mtllib:
+  Resource
 {
   RESOURCE(Mtllib)
 
-public:
   const Material *operator[](const std::string &name) const;
 
 private:

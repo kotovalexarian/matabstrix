@@ -3,17 +3,17 @@
 
 #include "store.hpp"
 
-class Resource
+struct Resource
 {
-  friend class Store;
+private:
+  friend struct Store;
 
   __attribute__((unused)) // Used by friend class Store
   unsigned long _ref_count = 0;
 };
 
 #define RESOURCE(T) \
-private: \
-  friend class ::Store; \
+  friend struct ::Store; \
   T(Store &store, const std::string &name); \
   static const std::string filename(const std::string &name);
 

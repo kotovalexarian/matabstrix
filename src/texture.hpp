@@ -6,12 +6,10 @@
 
 #include <string>
 
-class Texture:
-  public Resource
+struct Texture:
+  Resource
 {
   RESOURCE(Texture)
-
-public:
 
   void use() const;
 

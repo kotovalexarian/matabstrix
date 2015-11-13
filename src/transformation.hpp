@@ -3,9 +3,8 @@
 
 #include <glm/glm.hpp>
 
-class Transformation
+struct Transformation
 {
-public:
   glm::mat4 transformation() const;
 
   glm::mat4 base;

@@ -7,9 +7,8 @@
 
 #include <glm/glm.hpp>
 
-class Scene
+struct Scene
 {
-public:
   inline Scene &operator <<(Object *object);
 
   inline void draw(const glm::mat4 &mvp) const;

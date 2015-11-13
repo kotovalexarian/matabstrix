@@ -4,10 +4,9 @@
 #include "transformation.hpp"
 #include "scene.hpp"
 
-class Camera :
-  public Transformation
+struct Camera :
+  Transformation
 {
-public:
   inline Camera(const Scene &scene) : _scene(scene) {}
 
   inline void draw() const;

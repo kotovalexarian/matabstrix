@@ -6,12 +6,11 @@
 
 #include <string>
 
-class Program:
-  public Resource
+struct Program:
+  Resource
 {
   RESOURCE(Program)
 
-public:
   void use() const;
   GLuint get_uniform_location(const GLchar *name) const;
 
