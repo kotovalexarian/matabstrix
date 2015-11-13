@@ -73,7 +73,11 @@ int main()
   emscripten_set_mousemove_callback(nullptr, nullptr, false, on_em_mousemove);
 
   Program *program = new Program("textured");
+  program->bind_attrib_location(INDEX_POSITION, "position");
+  program->bind_attrib_location(INDEX_NORMAL, "normal");
+  program->bind_attrib_location(INDEX_TEX_COORD, "tex_coord");
   program->link();
+
   program->use();
 
   mvp_uniform = program->get_uniform_location("mvp");

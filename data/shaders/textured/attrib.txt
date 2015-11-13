@@ -1,3 +1,0 @@
-position
-normal
-tex_coord

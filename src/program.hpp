@@ -9,10 +9,11 @@ struct Program
 {
   Program(const std::string &name);
 
-  void use() const;
+  void bind_attrib_location(GLuint index, const GLchar *name);
 
   void link();
 
+  void use() const;
   GLuint get_uniform_location(const GLchar *name) const;
 
 private:

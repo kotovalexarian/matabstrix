@@ -20,27 +20,21 @@ Program::Program(const std::string &name)
 
   glAttachShader(_id, vertex_shader.id());
   glAttachShader(_id, fragment_shader.id());
-
-  std::ifstream file(path + "attrib.txt", std::ios::in);
-
-  std::string line;
-  int index = 0;
-
-  while (std::getline(file, line))
-    glBindAttribLocation(_id, index++, line.c_str());
-
-  for (int i = 0; i < index; ++i)
-    glEnableVertexAttribArray(i);
 }
 
-void Program::use() const
+void Program::bind_attrib_location(GLuint index, const GLchar *name)
 {
-  glUseProgram(_id);
+  glBindAttribLocation(_id, index, name);
 }
 
 void Program::link()
 {
   glLinkProgram(_id);
+}
+
+void Program::use() const
+{
+  glUseProgram(_id);
 }
 
 GLuint Program::get_uniform_location(const GLchar *name) const
