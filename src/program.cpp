@@ -6,7 +6,7 @@
 
 const std::string Program::filename(const std::string &name)
 {
-  return "/data/shaders/" + name;
+  return "/data/programs/" + name;
 }
 
 Program::Program(Store &store, const std::string &name):
@@ -16,7 +16,7 @@ Program::Program(Store &store, const std::string &name):
 
 const Executable *Program::build(
   GLuint attrib_count, const GLchar *const attribs[],
-  unsigned uniform_count, const GLchar *const uniforms[])
+  unsigned uniform_count, const GLchar *const uniforms[]) const
 {
   Executable *exe = new Executable();
 

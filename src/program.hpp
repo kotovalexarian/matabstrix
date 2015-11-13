@@ -1,22 +1,22 @@
 #ifndef _PROGRAM_HPP_
 #define _PROGRAM_HPP_
 
+#include "resource.hpp"
 #include "shader.hpp"
 #include "executable.hpp"
 
 #include <string>
 
-struct Program
+struct Program:
+  Resource
 {
-  Program(Store &store, const std::string &name);
+  RESOURCE(Program)
 
   const Executable *build(
     GLuint attrib_count, const GLchar *const attribs[],
-    unsigned uniform_count, const GLchar *const uniforms[]);
+    unsigned uniform_count, const GLchar *const uniforms[]) const;
 
 private:
-  static const std::string filename(const std::string &name);
-
   const Shader *vertex_shader;
   const Shader *fragment_shader;
 };
