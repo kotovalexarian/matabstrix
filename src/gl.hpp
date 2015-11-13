@@ -13,6 +13,12 @@ enum Attrib : GLuint
   __count
 };
 
+static const GLchar *const attribs[] = {
+  "position",
+  "normal",
+  "tex_coord",
+};
+
 extern GLuint mvp_uniform;
 extern GLuint local_modelview_uniform;
 

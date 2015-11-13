@@ -73,9 +73,7 @@ int main()
   emscripten_set_mousemove_callback(nullptr, nullptr, false, on_em_mousemove);
 
   Program *program = new Program("textured");
-  program->bind_attrib_location(position, "position");
-  program->bind_attrib_location(normal, "normal");
-  program->bind_attrib_location(tex_coord, "tex_coord");
+  program->bind_attribs(__count, attribs);
   program->link();
 
   program->use();

@@ -10,6 +10,7 @@ struct Program
   Program(const std::string &name);
 
   void bind_attrib_location(GLuint index, const GLchar *name);
+  void bind_attribs(GLuint count, const GLchar *const names[]);
 
   void link();
 
