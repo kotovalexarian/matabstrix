@@ -24,8 +24,6 @@ static EM_BOOL on_em_mousemove(int event_type, const EmscriptenMouseEvent *mouse
 GLuint mvp_uniform;
 GLuint local_modelview_uniform;
 
-static GLuint texture_uniform;
-
 static bool keys[GLFW_KEY_LAST];
 
 static Scene scene;
@@ -79,9 +77,6 @@ int main()
 
   mvp_uniform = program->get_uniform_location("mvp");
   local_modelview_uniform = program->get_uniform_location("local_modelview");
-
-  texture_uniform = program->get_uniform_location("texture");
-  glUniform1i(texture_uniform, 0);
 
   camera.projection = glm::perspective(45.0f, (float)640 / (float)480, 0.1f, 100.0f);
 
