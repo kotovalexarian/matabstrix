@@ -10,6 +10,9 @@ struct Program
   Program(const std::string &name);
 
   void use() const;
+
+  void link();
+
   GLuint get_uniform_location(const GLchar *name) const;
 
 private:

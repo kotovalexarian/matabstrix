@@ -72,7 +72,8 @@ int main()
   glfwSetKeyCallback(on_key);
   emscripten_set_mousemove_callback(nullptr, nullptr, false, on_em_mousemove);
 
-  const Program *program = new Program("textured");
+  Program *program = new Program("textured");
+  program->link();
   program->use();
 
   mvp_uniform = program->get_uniform_location("mvp");

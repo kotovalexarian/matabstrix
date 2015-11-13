@@ -29,8 +29,6 @@ Program::Program(const std::string &name)
   while (std::getline(file, line))
     glBindAttribLocation(_id, index++, line.c_str());
 
-  glLinkProgram(_id);
-
   for (int i = 0; i < index; ++i)
     glEnableVertexAttribArray(i);
 }
@@ -38,6 +36,11 @@ Program::Program(const std::string &name)
 void Program::use() const
 {
   glUseProgram(_id);
+}
+
+void Program::link()
+{
+  glLinkProgram(_id);
 }
 
 GLuint Program::get_uniform_location(const GLchar *name) const
