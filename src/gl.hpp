@@ -4,9 +4,14 @@
 #include <GL/glew.h>
 #include <GL/glfw.h>
 
-#define INDEX_POSITION 0
-#define INDEX_NORMAL 1
-#define INDEX_TEX_COORD 2
+enum Attrib : GLuint
+{
+  position,
+  normal,
+  tex_coord,
+
+  __count
+};
 
 extern GLuint mvp_uniform;
 extern GLuint local_modelview_uniform;
