@@ -1,4 +1,5 @@
 #include "scene.hpp"
+#include "light/sun.hpp"
 #include "camera.hpp"
 #include "store.hpp"
 #include "model/static.hpp"
@@ -22,6 +23,8 @@ static EM_BOOL on_em_mousemove(int event_type, const EmscriptenMouseEvent *mouse
 static bool keys[GLFW_KEY_LAST];
 
 static Scene scene;
+
+static Lights::Sun sun;
 
 static Camera camera(scene);
 
@@ -67,6 +70,11 @@ int main()
   glfwSetKeyCallback(on_key);
   emscripten_set_mousemove_callback(nullptr, nullptr, false, on_em_mousemove);
 
+  sun.ambient = glm::vec3(0.2, 0.2, 0.2);
+  sun.diffuse = glm::vec3(1.0, 1.0, 1.0);
+  sun.specular = glm::vec3(1.0, 1.0, 1.0);
+  sun.direction = glm::vec3(0.0, 0.0, -1.0);
+
   camera.projection = glm::perspective(45.0f, (float)640 / (float)480, 0.1f, 100.0f);
 
   protagonist = store.load<Models::Static>("protagonist.obj");
@@ -97,7 +105,8 @@ int main()
   untitled1 = new Object(*untitled);
   untitled1->position.x = -6;
 
-  scene << protagonist1
+  scene << &sun
+        << protagonist1
         << car1
         << suzanne1
         << teapot1
