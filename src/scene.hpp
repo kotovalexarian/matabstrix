@@ -9,15 +9,15 @@
 
 struct Scene
 {
-  inline Scene &operator <<(Object *object);
+  inline Scene &operator <<(const Object *object);
 
   inline void draw(const glm::mat4 &mvp) const;
 
 private:
-  std::vector<Object*> _objects;
+  std::vector<const Object*> _objects;
 };
 
-Scene &Scene::operator <<(Object *object)
+Scene &Scene::operator <<(const Object *object)
 {
   _objects.push_back(object);
 
