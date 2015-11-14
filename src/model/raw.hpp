@@ -28,7 +28,6 @@ namespace Models
     {
       position,
       normal,
-      tex_coord,
 
       __attrib_count
     };

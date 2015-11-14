@@ -12,7 +12,6 @@ using namespace Models;
 const GLchar *const Raw::attribs[] = {
   "position",
   "normal",
-  "tex_coord",
 };
 
 const GLchar *const Raw::uniforms[] = {
@@ -27,7 +26,7 @@ const std::string Raw::filename(const std::string &name)
 
 Raw::Raw(__attribute__((unused)) Store &store, const std::string &name)
 {
-  exe = store.load<Program>("textured")->build(
+  exe = store.load<Program>("normal")->build(
     __attrib_count, attribs,
     __uniform_count, uniforms
   );
@@ -71,8 +70,6 @@ void Raw::draw(const glm::mat4 &mvp, const glm::mat4 &transformation) const
   glEnableVertexAttribArray(normal);
   glBindBuffer(GL_ARRAY_BUFFER, normals_id);
   glVertexAttribPointer(normal, 3, GL_FLOAT, GL_FALSE, 0, reinterpret_cast<const GLvoid*>(0));
-
-  glDisableVertexAttribArray(tex_coord);
 
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, id);
   glDrawElements(GL_TRIANGLES, elements.size(), GL_UNSIGNED_SHORT, 0);
