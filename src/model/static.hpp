@@ -41,6 +41,7 @@ namespace Models
     {
       mvp,
       local_modelview,
+      sun_direction,
 
       __uniform_count
     };

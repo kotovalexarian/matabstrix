@@ -7,10 +7,11 @@ varying float light_weight;
 
 uniform mat4 mvp;
 uniform mat3 local_modelview;
+uniform vec3 sun_direction;
 
 void main(void) {
   gl_Position = mvp * position;
   f_tex_coord = tex_coord;
   vec3 transformed_normal = local_modelview * normal;
-  light_weight = max(dot(transformed_normal, vec3(0.0, 1.0, 0.0)), 0.0);
+  light_weight = max(dot(transformed_normal, -sun_direction), 0.0);
 }

@@ -2,6 +2,7 @@
 
 #include "../mtllib.hpp"
 #include "../program.hpp"
+#include "../scene.hpp"
 
 #include <vector>
 #include <fstream>
@@ -21,6 +22,7 @@ const GLchar *const Static::attribs[] = {
 const GLchar *const Static::uniforms[] = {
   "mvp",
   "local_modelview",
+  "sun_direction",
 };
 
 const std::string Static::filename(const std::string &name)
@@ -132,6 +134,8 @@ void Static::draw(const Scene &scene, const glm::mat4 &mvp, const glm::mat4 &tra
 
   const glm::mat3 local_modelview = glm::transpose(glm::inverse(glm::mat3(transformation)));
   glUniformMatrix3fv(exe->uniform(Uniform::local_modelview), 1, GL_FALSE, glm::value_ptr(local_modelview));
+
+  glUniform3fv(exe->uniform(Uniform::sun_direction), 1, glm::value_ptr(scene.sun()->direction));
 
   _material->use();
 
