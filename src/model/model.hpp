@@ -6,10 +6,9 @@
 
 #include <glm/glm.hpp>
 
-class Model:
-  public Resource
+struct Model:
+  Resource
 {
-public:
   virtual void draw(const glm::mat4 &mvp, const glm::mat4 &transformation) const = 0;
 
 protected:

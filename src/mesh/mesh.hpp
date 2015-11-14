@@ -7,9 +7,8 @@
 
 #include <glm/glm.hpp>
 
-class Mesh
+struct Mesh
 {
-public:
   std::vector<glm::vec3> positions;
   std::vector<glm::vec3> normals;
 

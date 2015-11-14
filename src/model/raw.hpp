@@ -7,8 +7,8 @@
 
 namespace Models
 {
-  class Raw:
-    public Model,
+  struct Raw:
+    Model,
     protected Mesh
   {
     RESOURCE(Raw)

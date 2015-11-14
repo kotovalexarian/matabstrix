@@ -8,8 +8,8 @@
 
 namespace Models
 {
-  class Static:
-    public Model,
+  struct Static:
+    Model,
     protected TexturedMesh
   {
     RESOURCE(Static)

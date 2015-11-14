@@ -3,10 +3,9 @@
 
 #include "mesh.hpp"
 
-class TexturedMesh:
-  public Mesh
+struct TexturedMesh:
+  Mesh
 {
-public:
   std::vector<glm::vec2> tex_coords;
 
   void add(const glm::vec3 &position, const glm::vec3 &normal, const glm::vec2 &tex_coord);
