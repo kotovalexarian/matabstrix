@@ -15,7 +15,7 @@ namespace Models
     RESOURCE(Static)
 
   public:
-    void draw(const glm::mat4 &mvp, const glm::mat4 &transformation) const;
+    void draw(const Scene &scene, const glm::mat4 &mvp, const glm::mat4 &transformation) const;
 
   private:
     GLuint positions_id;

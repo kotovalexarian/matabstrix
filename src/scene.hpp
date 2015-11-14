@@ -42,7 +42,7 @@ const Lights::Sun *Scene::sun() const
 void Scene::draw(const glm::mat4 &mvp) const
 {
   for (auto object : _objects)
-    object->draw(mvp);
+    object->draw(*this, mvp);
 }
 
 #endif // _SCENE_HPP_

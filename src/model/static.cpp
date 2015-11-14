@@ -123,7 +123,7 @@ Static::Static(Store &store, const std::string &name)
   id = create_array_buffer(GL_ELEMENT_ARRAY_BUFFER, elements.size() * sizeof(GLushort), elements.data());
 }
 
-void Static::draw(const glm::mat4 &mvp, const glm::mat4 &transformation) const
+void Static::draw(const Scene &scene, const glm::mat4 &mvp, const glm::mat4 &transformation) const
 {
   exe->use();
 
