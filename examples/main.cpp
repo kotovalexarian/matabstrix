@@ -1,10 +1,10 @@
-#include "store.hpp"
-#include "scene.hpp"
-#include "camera.hpp"
-#include "light/sun.hpp"
-#include "model/raw.hpp"
-#include "model/static.hpp"
-#include "object/with_model.hpp"
+#include "../src/store.hpp"
+#include "../src/scene.hpp"
+#include "../src/camera.hpp"
+#include "../src/light/sun.hpp"
+#include "../src/model/raw.hpp"
+#include "../src/model/static.hpp"
+#include "../src/object/with_model.hpp"
 
 #include <cstdlib>
 
