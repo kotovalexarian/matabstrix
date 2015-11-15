@@ -5,7 +5,7 @@ set (CMAKE_RUNTIME_OUTPUT_DIRECTORY "build")
 
 project (Matabstrix)
 add_definitions ("-std=c++14 -Wall -Wextra")
-set (CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} "--use-preload-plugins --preload-file data")
+set (CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} "--embed-file data -s STB_IMAGE=1 -s TOTAL_MEMORY=67108864")
 
 file (GLOB_RECURSE sources "src/**.cpp"
                            "examples/**.cpp")
