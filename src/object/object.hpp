@@ -2,22 +2,26 @@
 #define _OBJECT_HPP_
 
 #include "../transformation.hpp"
-#include "../model/model.hpp"
 
 #include <glm/glm.hpp>
 
 struct Scene;
 
-struct Object :
+struct Object:
   Transformation
 {
-  Object(const Model &model) : _model(model) {};
-  void draw(const Scene &scene, const glm::mat4 &mvp) const;
+  inline void draw(const Scene &scene, const glm::mat4 &mvp) const;
 
   bool visible = true;
 
-private:
-  const Model &_model;
+protected:
+  virtual void render(const Scene &scene, const glm::mat4 &mvp) const = 0;
 };
+
+void Object::draw(const Scene &scene, const glm::mat4 &mvp) const
+{
+  if (visible)
+    render(scene, mvp);
+}
 
 #endif // _OBJECT_HPP_

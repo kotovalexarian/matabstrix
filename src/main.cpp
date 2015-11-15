@@ -1,9 +1,10 @@
-#include "scene.hpp"
-#include "light/sun.hpp"
-#include "camera.hpp"
 #include "store.hpp"
-#include "model/static.hpp"
+#include "scene.hpp"
+#include "camera.hpp"
+#include "light/sun.hpp"
 #include "model/raw.hpp"
+#include "model/static.hpp"
+#include "object/with_model.hpp"
 
 #include <cstdlib>
 
@@ -84,25 +85,25 @@ int main()
   bunny = store.load<Models::Static>("bunny.obj");
   untitled = store.load<Models::Raw>("untitled.raw");
 
-  protagonist1 = new Object(*protagonist);
+  protagonist1 = new Objects::WithModel(*protagonist);
   protagonist1->position.z = 4;
 
-  car1 = new Object(*car);
+  car1 = new Objects::WithModel(*car);
   car1->position.z = -10;
 
-  suzanne1 = new Object(*suzanne);
+  suzanne1 = new Objects::WithModel(*suzanne);
   suzanne1->position.z = -2;
   suzanne1->position.y = 2;
 
-  teapot1 = new Object(*teapot);
+  teapot1 = new Objects::WithModel(*teapot);
   teapot1->position.x = -2.0;
   teapot1->position.y = 1.0;
   teapot1->angles.y = 45;
 
-  bunny1 = new Object(*bunny);
+  bunny1 = new Objects::WithModel(*bunny);
   bunny1->position.x = 2.0;
 
-  untitled1 = new Object(*untitled);
+  untitled1 = new Objects::WithModel(*untitled);
   untitled1->position.x = -6;
 
   scene << &sun
