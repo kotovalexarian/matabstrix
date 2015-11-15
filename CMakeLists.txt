@@ -12,6 +12,7 @@ file (GLOB_RECURSE sources "src/**.cpp"
 
 add_executable (matabstrix ${sources})
 set (CMAKE_EXECUTABLE_SUFFIX ".html")
+set_target_properties (matabstrix PROPERTIES OUTPUT_NAME "index")
 
 find_package (GLM REQUIRED)
 include_directories (${GLM_INCLUDE_DIRS})

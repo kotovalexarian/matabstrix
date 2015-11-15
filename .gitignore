@@ -7,7 +7,4 @@ install_manifest.txt
 Matabstrix.cbp
 Matabstrix.layout
 
-/build/**/*
-!/build/.keep
-
 *.blend1
