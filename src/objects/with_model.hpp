@@ -2,7 +2,7 @@
 #define _OBJECT_WITH_MODEL_HPP_
 
 #include "object.hpp"
-#include "../model/model.hpp"
+#include "../models/model.hpp"
 
 struct Scene;
 

@@ -1,18 +1,17 @@
-#ifndef _MODEL_STATIC_HPP_
-#define _MODEL_STATIC_HPP_
+#ifndef _MODEL_RAW_HPP_
+#define _MODEL_RAW_HPP_
 
 #include "model.hpp"
-#include "../mesh/textured.hpp"
-#include "../material.hpp"
+#include "../meshes/mesh.hpp"
 #include "../executable.hpp"
 
 namespace Models
 {
-  struct Static:
+  struct Raw:
     Model,
-    protected TexturedMesh
+    protected Mesh
   {
-    RESOURCE(Static)
+    RESOURCE(Raw)
 
   public:
     void draw(const Scene &scene, const glm::mat4 &mvp, const glm::mat4 &transformation) const;
@@ -20,11 +19,8 @@ namespace Models
   private:
     GLuint positions_id;
     GLuint normals_id;
-    GLuint tex_coords_id;
 
     GLuint id;
-
-    const Material *_material;
 
     const Executable *exe;
 
@@ -32,7 +28,6 @@ namespace Models
     {
       position,
       normal,
-      tex_coord,
 
       __attrib_count
     };
@@ -41,7 +36,6 @@ namespace Models
     {
       mvp,
       local_modelview,
-      sun_direction,
 
       __uniform_count
     };
@@ -51,4 +45,4 @@ namespace Models
   };
 };
 
-#endif // _MODEL_STATIC_HPP_
+#endif // _MODEL_RAW_HPP_

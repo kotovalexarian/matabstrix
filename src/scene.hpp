@@ -1,8 +1,8 @@
 #ifndef _SCENE_HPP_
 #define _SCENE_HPP_
 
-#include "object/object.hpp"
-#include "light/sun.hpp"
+#include "objects/object.hpp"
+#include "lights/sun.hpp"
 
 #include <vector>
 
