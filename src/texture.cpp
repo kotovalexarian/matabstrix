@@ -2,9 +2,6 @@
 
 #include <string>
 
-#define STB_IMAGE_IMPLEMENTATION
-#define STBI_ASSERT(x)
-#define STBI_ONLY_PNG
 #include <stb_image.h>
 
 const std::string Texture::filename(const std::string &name)
