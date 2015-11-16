@@ -1,4 +1,4 @@
-#include "../src/store.hpp"
+#include "../src/adapters/adapter.hpp"
 #include "../src/scene.hpp"
 #include "../src/camera.hpp"
 #include "../src/lights/sun.hpp"
@@ -15,6 +15,7 @@
 #include <emscripten/html5.h>
 
 static Store store;
+static const Adapter adapter(store);
 
 static void iterate();
 
@@ -78,12 +79,12 @@ int main()
 
   camera.projection = glm::perspective(45.0f, (float)640 / (float)480, 0.1f, 100.0f);
 
-  protagonist = store.load<Models::Static>("protagonist.obj");
-  car = store.load<Models::Static>("car.obj");
-  suzanne = store.load<Models::Static>("suzanne.obj");
-  teapot = store.load<Models::Static>("teapot.obj");
-  bunny = store.load<Models::Static>("bunny.obj");
-  untitled = store.load<Models::Raw>("untitled.raw");
+  protagonist = adapter.load<Models::Static>("protagonist.obj");
+  car = adapter.load<Models::Static>("car.obj");
+  suzanne = adapter.load<Models::Static>("suzanne.obj");
+  teapot = adapter.load<Models::Static>("teapot.obj");
+  bunny = adapter.load<Models::Static>("bunny.obj");
+  untitled = adapter.load<Models::Raw>("untitled.raw");
 
   protagonist1 = new Objects::WithModel(*protagonist);
   protagonist1->position.z = 4;

@@ -6,12 +6,12 @@
 
 const std::string Program::filename(const std::string &name)
 {
-  return "/data/programs/" + name;
+  return "/programs/" + name;
 }
 
-Program::Program(Store &store, const std::string &name):
-  vertex_shader(store.load<Shader>(name + ".vert")),
-  fragment_shader(store.load<Shader>(name + ".frag"))
+Program::Program(const Adapter &adapter, const std::string &name):
+  vertex_shader(adapter.load<Shader>(name + ".vert")),
+  fragment_shader(adapter.load<Shader>(name + ".frag"))
 {}
 
 const Executable *Program::build(

@@ -5,14 +5,14 @@
 
 const std::string Shader::filename(const std::string &name)
 {
-  return "/data/shaders/" + name;
+  return "/shaders/" + name;
 }
 
-Shader::Shader(__attribute__((unused)) Store &store, const std::string &name)
+Shader::Shader(const Adapter &adapter, const std::string &name)
 {
   const GLuint type = name.substr(name.size() - 5) == ".vert" ? GL_VERTEX_SHADER : GL_FRAGMENT_SHADER;
 
-  FILE *file = fopen(filename(name).c_str(), "r");
+  FILE *file = fopen(adapter.filename<Shader>(name).c_str(), "r");
 
   fseek(file, 0, SEEK_END);
   const long size = ftell(file);

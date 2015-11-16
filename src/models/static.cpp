@@ -27,17 +27,17 @@ const GLchar *const Static::uniforms[] = {
 
 const std::string Static::filename(const std::string &name)
 {
-  return "/data/models/" + name;
+  return "/models/" + name;
 }
 
-Static::Static(Store &store, const std::string &name)
+Static::Static(const Adapter &adapter, const std::string &name)
 {
-  exe = store.load<Program>("textured")->build(
+  exe = adapter.load<Program>("textured")->build(
     __attrib_count, attribs,
     __uniform_count, uniforms
   );
 
-  std::ifstream file(filename(name), std::ios::in);
+  std::ifstream file(adapter.filename<Static>(name), std::ios::in);
 
   const Mtllib *mtllib = nullptr;
 
@@ -104,7 +104,7 @@ Static::Static(Store &store, const std::string &name)
     else
     if (line.substr(0, 7) == "mtllib ")
     {
-      mtllib = (Mtllib*)store.load<Mtllib>(line.substr(7));
+      mtllib = adapter.load<Mtllib>(line.substr(7));
     }
     else
     if (line.substr(0, 7) == "usemtl ")

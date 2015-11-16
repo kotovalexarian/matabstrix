@@ -21,17 +21,17 @@ const GLchar *const Raw::uniforms[] = {
 
 const std::string Raw::filename(const std::string &name)
 {
-  return "/data/models/" + name;
+  return "/models/" + name;
 }
 
-Raw::Raw(__attribute__((unused)) Store &store, const std::string &name)
+Raw::Raw(const Adapter &adapter, const std::string &name)
 {
-  exe = store.load<Program>("normal")->build(
+  exe = adapter.load<Program>("normal")->build(
     __attrib_count, attribs,
     __uniform_count, uniforms
   );
 
-  FILE *file = fopen(filename(name).c_str(), "r");
+  FILE *file = fopen(adapter.filename<Raw>(name).c_str(), "r");
 
   while (!feof(file))
   {

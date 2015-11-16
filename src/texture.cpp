@@ -6,12 +6,12 @@
 
 const std::string Texture::filename(const std::string &name)
 {
-  return "/data/textures/" + name;
+  return "/textures/" + name;
 }
 
-Texture::Texture(__attribute__((unused)) Store &store, const std::string &name)
+Texture::Texture(const Adapter &adapter, const std::string &name)
 {
-  SDL_Surface *surface = IMG_Load(filename(name).c_str());
+  SDL_Surface *surface = IMG_Load(adapter.filename<Texture>(name).c_str());
 
   glGenTextures(1, &_id);
   glBindTexture(GL_TEXTURE_2D, _id);

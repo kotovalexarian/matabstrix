@@ -1,7 +1,7 @@
 #ifndef _RESOURCE_HPP_
 #define _RESOURCE_HPP_
 
-#include "store.hpp"
+#include "adapters/adapter.hpp"
 
 struct Resource
 {
@@ -14,7 +14,7 @@ private:
 
 #define RESOURCE(T) \
   friend struct ::Store; \
-  T(Store &store, const std::string &name); \
+  T(const Adapter &adapter, const std::string &name); \
   static const std::string filename(const std::string &name);
 
 #endif // _RESOURCE_HPP_
