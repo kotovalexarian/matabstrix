@@ -3,7 +3,9 @@
 VENDOR="vendor"
 
 GLM="$VENDOR/glm"
+STB="$VENDOR/stb"
 
 cmake \
 -DCMAKE_TOOLCHAIN_FILE="$EMSCRIPTEN/cmake/Modules/Platform/Emscripten.cmake" \
--DGLM_INCLUDE_DIR="$GLM"
+-DGLM_INCLUDE_DIR="$GLM" \
+-DSTB_INCLUDE_DIR="$STB"

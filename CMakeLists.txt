@@ -5,7 +5,7 @@ set (CMAKE_RUNTIME_OUTPUT_DIRECTORY "build")
 
 project (Matabstrix)
 add_definitions ("-std=c++14 -Wall -Wextra")
-set (CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} "--embed-file data -s STB_IMAGE=1 -s TOTAL_MEMORY=67108864")
+set (CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} "--embed-file data -s TOTAL_MEMORY=67108864")
 
 file (GLOB_RECURSE sources "src/**.cpp"
                            "examples/**.cpp")
@@ -16,3 +16,6 @@ set_target_properties (matabstrix PROPERTIES OUTPUT_NAME "index")
 
 find_package (GLM REQUIRED)
 include_directories (${GLM_INCLUDE_DIRS})
+
+find_package (STB REQUIRED)
+include_directories (${STB_INCLUDE_DIRS})
