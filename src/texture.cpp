@@ -2,7 +2,10 @@
 
 #include <string>
 
-#include <SDL_image.h>
+#define STB_IMAGE_IMPLEMENTATION
+#define STBI_ASSERT(x)
+#define STBI_ONLY_PNG
+#include <stb_image.h>
 
 const std::string Texture::filename(const std::string &name)
 {
@@ -11,14 +14,15 @@ const std::string Texture::filename(const std::string &name)
 
 Texture::Texture(const Adapter &adapter, const std::string &name)
 {
-  SDL_Surface *surface = IMG_Load(adapter.filename<Texture>(name).c_str());
+  GLsizei width, height, comp;
+  GLvoid *data = stbi_load(adapter.filename<Texture>(name).c_str(), &width, &height, &comp, 0);
 
   glGenTextures(1, &_id);
   glBindTexture(GL_TEXTURE_2D, _id);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, surface->w, surface->h, 0, GL_RGBA, GL_UNSIGNED_BYTE, surface->pixels);
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
 
-  SDL_FreeSurface(surface);
+  stbi_image_free(data);
 }
 
 void Texture::use() const
