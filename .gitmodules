@@ -1,5 +1,5 @@
-[submodule "build"]
-	path = build
+[submodule "build/examples/demo"]
+	path = build/examples/demo
 	url = git@github.com:meoweg/Matabstrix.git
 	branch = gh-pages
 [submodule "vendor/glm"]

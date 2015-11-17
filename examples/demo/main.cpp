@@ -1,10 +1,10 @@
-#include "../src/adapters/adapter.hpp"
-#include "../src/scene.hpp"
-#include "../src/camera.hpp"
-#include "../src/lights/sun.hpp"
-#include "../src/models/raw.hpp"
-#include "../src/models/static.hpp"
-#include "../src/objects/with_model.hpp"
+#include <adapters/adapter.hpp>
+#include <scene.hpp>
+#include <camera.hpp>
+#include <lights/sun.hpp>
+#include <models/raw.hpp>
+#include <models/static.hpp>
+#include <objects/with_model.hpp>
 
 #include <cstdlib>
 

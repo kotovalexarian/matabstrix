@@ -30,7 +30,7 @@ const T *Adapter::load(const std::string &name) const
 template <class T>
 const std::string Adapter::filename(const std::string &name) const
 {
-  return "/data" + T::filename(name);
+  return T::filename(name);
 }
 
 #endif // _ADAPTER_HPP_
