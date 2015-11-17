@@ -2,17 +2,21 @@ cmake_minimum_required (VERSION 3.0)
 set (CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
 
 set (CMAKE_RUNTIME_OUTPUT_DIRECTORY "build")
+set (CMAKE_ARCHIVE_OUTPUT_DIRECTORY "build")
 
 project (Matabstrix)
 add_definitions ("-std=c++14 -Wall -Wextra")
 set (CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} "--embed-file data -s TOTAL_MEMORY=67108864")
 
-file (GLOB_RECURSE sources "src/**.cpp"
-                           "examples/**.cpp")
+file (GLOB_RECURSE sources  "src/**.cpp")
+file (GLOB_RECURSE examples "examples/**.cpp")
 
-add_executable (matabstrix ${sources})
+add_library (matabstrix STATIC ${sources})
+
+add_executable (example ${examples})
 set (CMAKE_EXECUTABLE_SUFFIX ".html")
-set_target_properties (matabstrix PROPERTIES OUTPUT_NAME "index")
+set_target_properties (example PROPERTIES OUTPUT_NAME "index")
+target_link_libraries (example matabstrix)
 
 find_package (GLM REQUIRED)
 include_directories (${GLM_INCLUDE_DIRS})
