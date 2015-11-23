@@ -75,7 +75,7 @@ int main()
   sun.ambient = glm::vec3(0.2, 0.2, 0.2);
   sun.diffuse = glm::vec3(1.0, 1.0, 1.0);
   sun.specular = glm::vec3(1.0, 1.0, 1.0);
-  sun.direction = glm::vec3(0.0, 0.0, -1.0);
+  sun.direction = glm::vec3(0.0, -1.0, 0.0);
 
   camera.projection = glm::perspective(45.0f, (float)640 / (float)480, 0.1f, 100.0f);
 

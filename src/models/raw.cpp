@@ -35,15 +35,12 @@ Raw::Raw(const Adapter &adapter, const std::string &name)
 
   while (!feof(file))
   {
-    glm::vec3 v[3];
+    std::array<glm::vec3, 3> v;
 
     for (int i = 0; i < 3; ++i)
       fscanf(file, "%f %f %f", &v[i].x, &v[i].y, &v[i].z);
 
-    glm::vec3 normal = (v[0] - v[1]) * (v[2] - v[1]);
-
-    for (int i = 0; i < 3; ++i)
-      add(v[i], normal);
+    add3_with_auto_normals(v, glm::vec3(0.0f, -10.0f, 0.0f));
   }
 
   fclose(file);
